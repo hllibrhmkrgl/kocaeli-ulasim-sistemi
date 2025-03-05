@@ -24,7 +24,7 @@ public class Main {
         // EĞER İSTEDİĞİN Bİ DURAĞA ERİŞMEK İSTİYORSAN
         System.out.println(routeFinder.getDurakById("bus_otogar"));
         // KULLLAN
-
+        System.out.println("selam");
         // Örnek: bus_otogar -> bus_symbolavm arasında en düşük ücretli rota
         routeFinder.findMinCostRoute("bus_otogar", "bus_symbolavm");
 
