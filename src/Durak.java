@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Durak {
     private String id;
     private String name;
@@ -5,7 +7,7 @@ public class Durak {
     private double lat;
     private double lon;
     private boolean sonDurak;
-    private java.util.List<NextStop> nextStops;
+    private ArrayList<NextStop> nextStops = new ArrayList<>();
     private Transfer transfer;
 
     // Getter & Setter
@@ -57,11 +59,11 @@ public class Durak {
         this.sonDurak = sonDurak;
     }
 
-    public java.util.List<NextStop> getNextStops() {
+    public ArrayList<NextStop> getNextStops() {
         return nextStops;
     }
 
-    public void setNextStops(java.util.List<NextStop> nextStops) {
+    public void setNextStops(ArrayList<NextStop> nextStops) {
         this.nextStops = nextStops;
     }
 

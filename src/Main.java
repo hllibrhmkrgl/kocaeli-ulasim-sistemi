@@ -1,7 +1,7 @@
 import com.google.gson.Gson;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -14,7 +14,7 @@ public class Main {
         Root root = gson.fromJson(jsonString, Root.class);
 
         // Durak listesi al
-        List<Durak> durakList = root.getDuraklar();
+        ArrayList<Durak> durakList = root.getDuraklar();
         // Taksi ücreti bilgisi
         Taxi taxiInfo = root.getTaxi();
 

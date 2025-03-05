@@ -1,7 +1,9 @@
+import java.util.ArrayList;
+
 public class Root {
     private String city;
     private Taxi taxi;
-    private java.util.List<Durak> duraklar;
+    private ArrayList<Durak> duraklar = new ArrayList<>();
 
     // Getter & Setter
     public String getCity() {
@@ -20,11 +22,11 @@ public class Root {
         this.taxi = taxi;
     }
 
-    public java.util.List<Durak> getDuraklar() {
+    public ArrayList<Durak> getDuraklar() {
         return duraklar;
     }
 
-    public void setDuraklar(java.util.List<Durak> duraklar) {
+    public void setDuraklar(ArrayList<Durak> duraklar) {
         this.duraklar = duraklar;
     }
 }

@@ -1,7 +1,7 @@
-import java.util.List;
+import java.util.ArrayList;
 
 class CityData {
     String city;
     Taxi taxi;
-    List<Durak> duraklar;
+    ArrayList<Durak> duraklar = new ArrayList<>();
 }
