@@ -23,6 +23,75 @@ public class RouteFinder {
         return durakMap.get(id);
     }
 
+    public void printRouteDetails(String startId, String endId) {
+        // Eğer bestPath boşsa, önce en ucuz rotayı bul
+        if (bestPath.isEmpty()) {
+            findMinCostRoute(startId, endId);
+        }
+        // Hâlâ boşsa artık rota gerçekten yok demektir
+        if (bestPath.isEmpty()) {
+            System.out.println("❌ Rota bulunamadı!");
+            return;
+        }
+        System.out.println("\n📍 Rota Detayları: ");
+        double totalCost = 0.0;
+        int step = 1;
+        for (int i = 0; i < bestPath.size() - 1; i++) {
+            String currentStopId = bestPath.get(i);
+            String nextStopId = bestPath.get(i + 1);
+            Durak currentDurak = durakMap.get(currentStopId);
+            Durak nextDurak = durakMap.get(nextStopId);
+            if (currentDurak == null || nextDurak == null) continue;
+            NextStop selectedNextStop = null;
+            if (currentDurak.getNextStops() != null) {
+                for (NextStop ns : currentDurak.getNextStops()) {
+                    if (ns.getStopId().equals(nextStopId)) {
+                        selectedNextStop = ns;
+                        break;
+                    }
+                }
+            }
+            Transfer transfer = currentDurak.getTransfer();
+            boolean isTransfer = (transfer != null &&
+                    transfer.getTransferStopId().equals(nextStopId));
+            // Normal geçiş
+            if (selectedNextStop != null) {
+                totalCost += selectedNextStop.getUcret();
+                System.out.println(step + ". " + currentDurak.getId() +
+                        " → " + nextDurak.getId() +
+                        " (" + getTransportIcon(currentDurak) + ")");
+                System.out.println("📏 Mesafe: " +
+                        String.format("%.1f km", selectedNextStop.getMesafe()));
+                System.out.println("⏳ Süre: " + selectedNextStop.getSure() + " dk");
+                System.out.println("💰 Ücret: " +
+                        String.format("%.2f TL", selectedNextStop.getUcret()));
+            }
+            // Transfer geçişi
+            else if (isTransfer) {
+                totalCost += transfer.getTransferUcret();
+                System.out.println(step + ". " + currentDurak.getId() +
+                        " → " + nextDurak.getId() + " (🔄 Transfer)");
+                System.out.println("⏳ Süre: 2 dk");
+                System.out.println("💰 Ücret: " +
+                        String.format("%.2f TL", transfer.getTransferUcret()));
+            }
+
+            step++;
+        }
+
+        System.out.println("\n✅ Toplam Ücret: " + String.format("%.2f TL", totalCost));
+    }
+
+
+    // Durak adına göre taşıma türünü belirleyip emoji döndüren metot
+    private String getTransportIcon(Durak durak) {
+        String durakAdi = durak.getId().toLowerCase();
+        if (durakAdi.contains("bus")) return "🚌 Otobüs";
+        if (durakAdi.contains("tram")) return "🚋 Tramvay";
+        if (durakAdi.contains("metro")) return "🚇 Metro";
+        if (durakAdi.contains("ferry")) return "⛴️ Feribot";
+        return "🚖 Taksi"; // Varsayılan
+    }
     /**
      * Belirtilen startId ve endId arasındaki
      * en düşük ücretli rotayı bulur ve ekrana yazdırır.
@@ -30,14 +99,11 @@ public class RouteFinder {
     public void findMinCostRoute(String startId, String endId) {
         minCost = Double.MAX_VALUE;
         bestPath.clear();
-
         // Şu anki rota path'ini tutacak liste
         ArrayList<String> currentPath = new ArrayList<>();
         currentPath.add(startId);
-
         // DFS ile en ucuz rotayı aramaya başla
         dfs(startId, endId, 0.0, currentPath);
-
         if (bestPath.isEmpty()) {
             System.out.println("Rota bulunamadı!");
         } else {
