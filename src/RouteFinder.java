@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,7 @@ public class RouteFinder {
         bestPath.clear();
 
         // Şu anki rota path'ini tutacak liste
-        List<String> currentPath = new ArrayList<>();
+        ArrayList<String> currentPath = new ArrayList<>();
         currentPath.add(startId);
 
         // DFS ile en ucuz rotayı aramaya başla
@@ -40,8 +41,8 @@ public class RouteFinder {
         if (bestPath.isEmpty()) {
             System.out.println("Rota bulunamadı!");
         } else {
-            System.out.println("En düşük ücret: " + minCost);
-            System.out.println("Rota: " + bestPath);
+            System.out.println("En düşük ücret: " + minCost+" TL 💵");
+            System.out.println("Rota: " + bestPath+" 🛣️");
         }
     }
 
@@ -58,20 +59,17 @@ public class RouteFinder {
             }
             return;
         }
-
         // Geçerli durağı al
         Durak currentDurak = durakMap.get(currentId);
         if (currentDurak == null) {
             // Geçersiz bir durak ID'si
             return;
         }
-
         // 1) Durağın nextStops listesini dolaş
         if (currentDurak.getNextStops() != null) {
             for (NextStop ns : currentDurak.getNextStops()) {
                 String nextId = ns.getStopId();
                 double nextCost = currentCost + ns.getUcret(); // Ücret ekle
-
                 // Aynı rotada tekrar aynı durağa gitmemek için kontrol
                 if (!currentPath.contains(nextId)) {
                     currentPath.add(nextId);
@@ -81,13 +79,11 @@ public class RouteFinder {
                 }
             }
         }
-
         // 2) Transfer varsa, onu da ayrı bir bağlantı olarak değerlendir
         Transfer tf = currentDurak.getTransfer();
         if (tf != null) {
             String transferId = tf.getTransferStopId();
             double transferCost = currentCost + tf.getTransferUcret();
-
             if (!currentPath.contains(transferId)) {
                 currentPath.add(transferId);
                 dfs(transferId, endId, transferCost, currentPath);
@@ -108,7 +104,7 @@ public class RouteFinder {
     /**
      * İki Durak arasındaki mesafeyi hesaplayan haversineDistance.
      */
-    public static double haversineDistance(Durak d1, Durak d2) {
+    public double haversineDistance(Durak d1, Durak d2) {
         if (d1 == null || d2 == null) {
             throw new IllegalArgumentException("D1 veya D2 null olamaz.");
         }
@@ -118,7 +114,7 @@ public class RouteFinder {
     /**
      * Kullanıcı ve durak koordinatlarını (4 double) alarak haversine mesafesini hesaplar.
      */
-    public static double haversineTaxiDistance(double lat1, double lon1, double lat2, double lon2) {
+    public double haversineTaxiDistance(double lat1, double lon1, double lat2, double lon2) {
         final double R = 6371.0; // Dünya yarıçapı (km)
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
