@@ -27,7 +27,8 @@ public class RouteFinder {
             List<String> path = queue.poll();
             String lastStop = path.get(path.size() - 1);
             if (lastStop.equals(to)) {
-                System.out.println("🚌 Otobüs Rotası: " + String.join(" → ", path));
+                bestPath = new ArrayList<>(path); // En iyi rotayı kaydet
+                printRouteDetails(from, to); // Detaylı rota çıktısını göster
                 return;
             }
             Durak currentDurak = durakMap.get(lastStop);
@@ -45,6 +46,8 @@ public class RouteFinder {
         }
         System.out.println("❌ Belirtilen otobüs rotası bulunamadı.");
     }
+
+
 
     public void getAllBus() {
         System.out.println("🚌 Otobüs Durakları ve Bağlantıları:");
