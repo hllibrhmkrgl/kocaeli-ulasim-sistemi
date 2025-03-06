@@ -7,9 +7,10 @@ public class RouteService {
         this.routeFinder = new RouteFinder(durakList);
     }
 
-    public void findAndPrintRoute(String startDurak, String endDurak) {
+    public Object findAndPrintRoute(String startDurak, String endDurak) {
         System.out.println("YOL = " + startDurak + " ➡️ " + endDurak);
         routeFinder.findMinCostRoute(startDurak, endDurak);
         routeFinder.printRouteDetails(startDurak, endDurak + "\n");
+        return null;
     }
 }

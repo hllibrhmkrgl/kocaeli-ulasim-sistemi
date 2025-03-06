@@ -16,6 +16,8 @@ public class MainFrame extends JFrame {
     private JTextField hedefDurakField;
     private JComboBox<String> islemCombo;
     private JButton calistirButton;
+    // Çıktıları göstermek için JTextArea
+    private JTextArea outputArea;
 
     public MainFrame(Durak durak, Root root,
                      UserLocationHandler locationHandler,
@@ -91,7 +93,6 @@ public class MainFrame extends JFrame {
         JPanel discountPanel = new JPanel();
         discountPanel.setLayout(new BoxLayout(discountPanel, BoxLayout.Y_AXIS));
         discountPanel.setBorder(BorderFactory.createTitledBorder("İndirim Bilgisi"));
-        // Burada maximum size ayarı yapmıyoruz, panelin içeriği istediği kadar yer alsın.
         discountPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel lblDiscountHeader = new JLabel();
@@ -127,6 +128,15 @@ public class MainFrame extends JFrame {
         rbYasli.addActionListener(userTypeListener);
         rbNormal.addActionListener(userTypeListener);
 
+        // Çıktı alanı (output area) ekleyelim
+        outputArea = new JTextArea(5, 20);
+        outputArea.setEditable(false);
+        outputArea.setLineWrap(true);
+        outputArea.setWrapStyleWord(true);
+        JScrollPane outputScroll = new JScrollPane(outputArea);
+        outputScroll.setBorder(BorderFactory.createTitledBorder("Çıktı Bilgisi"));
+        outputScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         // Profil paneline ekle
         profilPanel.add(lblDurakBilgisi);
         profilPanel.add(lblKoordinat);
@@ -134,6 +144,8 @@ public class MainFrame extends JFrame {
         profilPanel.add(userTypePanel);
         profilPanel.add(Box.createVerticalStrut(10));
         profilPanel.add(discountPanel);
+        profilPanel.add(Box.createVerticalStrut(10));
+        profilPanel.add(outputScroll);
 
         // -------------------------------------------------------------------
         // 2) HARİTA PANELİ (orta - CENTER)
@@ -178,28 +190,28 @@ public class MainFrame extends JFrame {
         calistirButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         islemPanel.add(calistirButton);
 
-        // Butonun tıklanma olayı
+        // Butonun tıklanma olayı: Çalıştır butonuna basıldığında işlem sonucu outputArea'ya yazılsın
         calistirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                StringBuilder output = new StringBuilder();
                 int secilenIslem = islemCombo.getSelectedIndex() + 1;
 
                 switch (secilenIslem) {
                     case 2:
-                        System.out.println("2. Otobüs Duraklarının ismine bakma");
+                        output.append("2. Otobüs Duraklarının ismine bakma\n");
                         String busInfo = routeFinder.getAllBusInfo();
-                        System.out.println(busInfo);
+                        output.append(busInfo).append("\n");
                         JOptionPane.showMessageDialog(MainFrame.this, busInfo);
                         break;
                     case 3:
-                        System.out.println("3. Tramvay Duraklarının ismine bakma");
+                        output.append("3. Tramvay Duraklarının ismine bakma\n");
                         String tramInfo = routeFinder.getAllTramInfo();
-                        System.out.println(tramInfo);
+                        output.append(tramInfo).append("\n");
                         JOptionPane.showMessageDialog(MainFrame.this, tramInfo);
                         break;
                     case 1:
                     case 4:
-                        // Hedef durak girişi gerektiren işlemler
                         String hedefDurakIsmi = hedefDurakField.getText().trim();
                         boolean durakVarMi = false;
                         Durak hedefDurak = null;
@@ -213,24 +225,31 @@ public class MainFrame extends JFrame {
                         if (!durakVarMi) {
                             JOptionPane.showMessageDialog(MainFrame.this,
                                     "Hata! Girdiğiniz durak listede bulunmuyor.");
+                            output.append("Hata! Girdiğiniz durak listede bulunmuyor.\n");
                             System.out.println("Hata! Girdiğiniz durak listede bulunmuyor.");
+                            outputArea.setText(output.toString());
                             return;
                         }
                         if (secilenIslem == 1) {
-                            System.out.println("1. Gitmek İstediğim durağa olan en kısa yol");
+                            output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
                             routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
+                            output.append(routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId()));
                         } else {
-                            System.out.println("4. Sadece Otobüs ile gitmek için yol");
+                            output.append("4. Sadece Otobüs ile gitmek için yol\n");
                             routeFinder.getOnlyBusRoute(nearestDurak.getId(), hedefDurak.getId());
                         }
+                        output.append("İşlem tamamlandı.\n");
                         JOptionPane.showMessageDialog(MainFrame.this,
-                                "İşlem tamamlandı, detaylar terminalde gösterildi.");
+                                "İşlem tamamlandı.");
                         break;
                     default:
-                        System.out.println("Hatalı seçim");
+                        output.append("Hatalı seçim\n");
                         JOptionPane.showMessageDialog(MainFrame.this,
                                 "Hatalı seçim yaptınız.");
                 }
+                // outputArea'ya sonucu yaz
+                outputArea.setText(output.toString());
+                System.out.println(output.toString());
             }
         });
 
