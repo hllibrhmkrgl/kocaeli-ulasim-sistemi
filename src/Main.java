@@ -12,7 +12,6 @@ public class Main {
         String jsonPath = "veriseti.json";
         Root root = JsonReader.readJson(jsonPath);
         Scanner scanner = new Scanner(System.in);
-
         // Kullanıcının girdiği enlemlere göre en yakın durağı bulma
         double userLat = 40;
         double userLon = 29.950;
@@ -20,25 +19,21 @@ public class Main {
         UserLocationHandler locationHandler = new UserLocationHandler(root.getDuraklar(), root.getTaxi());
         Durak nearestDurak = locationHandler.findNearestDurak(userLat, userLon);
         double enYakinDurakMesafe = locationHandler.getDistanceToDurak(userLat, userLon, nearestDurak);
-
         // Taksi ücreti bilgisi
         Taxi taxiInfo = root.getTaxi();
-
         // RouteFinder örneği oluştur
         RouteFinder routeFinder = new RouteFinder(root.getDuraklar());
-
         // Kullanıcı başlangıç bilgileri :
         System.out.println("‼️‼️‼️Bulunduğun durak sana en yakın olan "+nearestDurak.getId()+" olarak belirlenmiştir‼️‼️‼️");
         System.out.println("👉 " + nearestDurak.getId() + " ➡️ " +
                 String.format("%.1f km", enYakinDurakMesafe) + " Uzaklıkta (Yürüme🚶‍♂️)");
-
         boolean taksiCagir = false;
         if(enYakinDurakMesafe > 3){
             System.out.println("️️ - - En yakın durağa olan mesafeniz 3 km den büyük olduğu için taksi çağırılıyor️️");
             taksiCagir = true;
         }
         // Son durakta bulunma Kontrolü
-        if(nearestDurak.getNextStops().size() == 0){
+        if(nearestDurak.getNextStops().isEmpty()){
             System.out.println("!!! Bulunduğunuz durak son durak bu duraktan işlem yapamazsınız !!!");
             return;
         }
@@ -46,6 +41,7 @@ public class Main {
                 String.format("%.2f TL",
                         routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo)));
         RouteService routeService = new RouteService(root.getDuraklar());
+        /*                                İLK DURAK BULUNDUKTAN SONRAKİ İŞLEMLER                                                     */
         System.out.println("-Gitmek istediğiniz durağın ismini yazınız .");
         String hedefDurakisim = scanner.nextLine();
         double hedefDurakMesafe ;
@@ -58,12 +54,28 @@ public class Main {
                 break;
             }
         }
-        // Durak var mı yok mu belirle var ise yolları kullanıcıya sun
-        if (durakVarMi) {
-            routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
-        } else {
+        if(!durakVarMi){
             System.out.println("Hata! Girdiğiniz durak listede bulunmuyor.");
+            return;
         }
-
+        System.out.println("Lütfen yapmak istediğiniz işlemi girin. \n"+
+                "1.Gitmek İstediğim durağa olan en kısa yol\n"+
+                "2.Otobüss Duraklarının ismine bakma.\n"+
+                "3.Tramvay Duraklarının ismine bakma."
+        );
+        int islem = scanner.nextInt();
+        switch (islem) {
+            case 1:
+                routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
+                break;
+            case 2:
+                routeFinder.getAllBus();
+                break;
+            case 3 :
+                routeFinder.getAllTram();
+                break;
+            default:
+                System.out.println("Hatalı Numara");
+        }
     }
 }

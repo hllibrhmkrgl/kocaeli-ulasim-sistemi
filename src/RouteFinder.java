@@ -17,7 +17,22 @@ public class RouteFinder {
             durakMap.put(d.getId(), d);
         }
     }
-
+    public void getAllBus(){
+        System.out.println("Otobüs durakları :");
+        for (Durak d : durakMap.values()) {
+            if(d.getType().equals("bus")){
+                System.out.println(d.getId());
+            }
+        }
+    }
+    public void getAllTram(){
+        System.out.println("Tramvay durakları :");
+        for (Durak d : durakMap.values()) {
+            if(d.getType().equals("tram")){
+                System.out.println(d.getId());
+            }
+        }
+    }
     public Durak getDurakById(String id) {
         return durakMap.get(id);
     }
