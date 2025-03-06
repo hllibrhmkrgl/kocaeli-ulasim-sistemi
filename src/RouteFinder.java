@@ -33,7 +33,8 @@ public class RouteFinder {
             return;
         }
         System.out.println("\n📍 Rota Detayları: ");
-        double totalCost = 0.0;
+        double totalCost = 0;
+        double totalTime = 0;
         int step = 1;
         for (int i = 0; i < bestPath.size() - 1; i++) {
             String currentStopId = bestPath.get(i);
@@ -56,6 +57,7 @@ public class RouteFinder {
             // Normal geçiş
             if (selectedNextStop != null) {
                 totalCost += selectedNextStop.getUcret();
+                totalTime += selectedNextStop.getSure();
                 System.out.println(step + ". " + currentDurak.getId() +
                         " → " + nextDurak.getId() +
                         " (" + getTransportIcon(currentDurak) + ")");
@@ -68,17 +70,17 @@ public class RouteFinder {
             // Transfer geçişi
             else if (isTransfer) {
                 totalCost += transfer.getTransferUcret();
+                totalTime += transfer.getTransferSure();
                 System.out.println(step + ". " + currentDurak.getId() +
                         " → " + nextDurak.getId() + " (🔄 Transfer)");
-                System.out.println("⏳ Süre: 2 dk");
+                System.out.println("⏳ Süre: " + transfer.getTransferSure() + " dk");
                 System.out.println("💰 Ücret: " +
                         String.format("%.2f TL", transfer.getTransferUcret()));
             }
-
             step++;
         }
-
-        System.out.println("\n✅ Toplam Ücret: " + String.format("%.2f TL", totalCost));
+        System.out.println("\n✅ Toplam Ücret: " + String.format("%.2f TL", totalCost)+" 💰");
+        System.out.println("\n✅ Toplam Süre: " + String.format("%.2f Dk", totalTime)+" ⏳");
     }
 
 

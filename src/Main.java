@@ -1,4 +1,6 @@
 import com.google.gson.Gson;
+import com.google.gson.internal.bind.util.ISO8601Utils;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         // Kullanıcının girdiği enlemlere göre en yakın durağı bulma
-        double userLat = 40.75;
+        double userLat = 40;
         double userLon = 29.950;
                                     // Konum için
         UserLocationHandler locationHandler = new UserLocationHandler(root.getDuraklar(), root.getTaxi());
@@ -27,14 +29,18 @@ public class Main {
 
         // Kullanıcı başlangıç bilgileri :
         System.out.println("‼️‼️‼️Bulunduğun durak sana en yakın olan "+nearestDurak.getId()+" olarak belirlenmiştir‼️‼️‼️");
-        System.out.println("👉 " + nearestDurak.getId() +
-                " ➡️ " + String.format("%.1f km",
-                enYakinDurakMesafe)+" Uzaklıkta");
+        System.out.println("👉 " + nearestDurak.getId() + " ➡️ " +
+                String.format("%.1f km", enYakinDurakMesafe) + " Uzaklıkta (Yürüme🚶‍♂️)");
 
         boolean taksiCagir = false;
         if(enYakinDurakMesafe > 3){
-            System.out.println("️‼️En yakın durağa olan mesafeniz 3 km den büyük olduğu için taksi çağırılıyor️‼️");
+            System.out.println("️️ - - En yakın durağa olan mesafeniz 3 km den büyük olduğu için taksi çağırılıyor️️");
             taksiCagir = true;
+        }
+        // Son durakta bulunma Kontrolü
+        if(nearestDurak.getNextStops().size() == 0){
+            System.out.println("!!! Bulunduğunuz durak son durak bu duraktan işlem yapamazsınız !!!");
+            return;
         }
         System.out.println("En yakın durağa olan taksi ücreti : " +
                 String.format("%.2f TL",
