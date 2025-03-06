@@ -42,7 +42,8 @@ public class Main {
                     routeService,
                     nearestDurak,
                     userLat,
-                    userLon
+                    userLon,
+                    taxiInfo
             );
             frame.setVisible(true);
         });

@@ -11,7 +11,7 @@ public class MainFrame extends JFrame {
     private double userLat;
     private double userLon;
     private String userType = "Normal"; // Varsayılan kullanıcı tipi
-
+    private Taxi taxi ;
     // Arayüz bileşenleri (Hedef durak giriş alanı, ComboBox, Buton)
     private JTextField hedefDurakField;
     private JComboBox<String> islemCombo;
@@ -25,7 +25,8 @@ public class MainFrame extends JFrame {
                      RouteService routeService,
                      Durak nearestDurak,
                      double userLat,
-                     double userLon) {
+                     double userLon,
+                     Taxi taxiInfo) {
 
         // Gelen parametreleri sakla
         this.root = root;
@@ -35,7 +36,7 @@ public class MainFrame extends JFrame {
         this.nearestDurak = nearestDurak;
         this.userLat = userLat;
         this.userLon = userLon;
-
+        this.taxi = taxiInfo;
         // Temel pencere ayarları
         setTitle("Ulaşım Uygulaması");
         setSize(1280, 720);
@@ -53,12 +54,17 @@ public class MainFrame extends JFrame {
         // Profil bilgileri
         JLabel lblDurakBilgisi = new JLabel("En Yakın Durak: " +
                 (nearestDurak != null ? nearestDurak.getId() : "Bilinmiyor"));
+        JLabel BaslangicTaksiBilgisi = new JLabel("En yakın durağa Taksi ücreti : "+
+                routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo)
+                      +" TL");
         JLabel lblKoordinat = new JLabel("Koordinatlar: " + userLat + " , " + userLon);
 
         // Genişlik ayarları: Yazıların tüm genişliği kaplaması için
         lblDurakBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblDurakBilgisi.getPreferredSize().height));
         lblKoordinat.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblKoordinat.getPreferredSize().height));
+        BaslangicTaksiBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, BaslangicTaksiBilgisi.getPreferredSize().height));
         lblDurakBilgisi.setAlignmentX(Component.LEFT_ALIGNMENT);
+        BaslangicTaksiBilgisi.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblKoordinat.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Kullanıcı tipi seçimi için radiobutton paneli
@@ -139,6 +145,7 @@ public class MainFrame extends JFrame {
 
         // Profil paneline ekle
         profilPanel.add(lblDurakBilgisi);
+        profilPanel.add(BaslangicTaksiBilgisi);
         profilPanel.add(lblKoordinat);
         profilPanel.add(Box.createVerticalStrut(10)); // araya boşluk ekle
         profilPanel.add(userTypePanel);
