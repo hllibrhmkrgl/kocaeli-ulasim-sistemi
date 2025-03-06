@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,12 +6,12 @@ import java.util.Map;
 public class RouteFinder {
     private Map<String, Durak> durakMap;
     private double minCost = Double.MAX_VALUE;
-    private List<String> bestPath = new ArrayList<>();
+    private ArrayList<String> bestPath = new ArrayList<>();
 
     /**
      * Constructor, Durak listesi alır, durakMap oluşturur.
      */
-    public RouteFinder(List<Durak> durakList) {
+    public RouteFinder(ArrayList<Durak> durakList) {
         durakMap = new HashMap<>();
         for (Durak d : durakList) {
             durakMap.put(d.getId(), d);
@@ -90,7 +89,7 @@ public class RouteFinder {
         if (durakAdi.contains("tram")) return "🚋 Tramvay";
         if (durakAdi.contains("metro")) return "🚇 Metro";
         if (durakAdi.contains("ferry")) return "⛴️ Feribot";
-        return "🚖 Taksi"; // Varsayılan
+        return "🚖 Taksi";
     }
     /**
      * Belirtilen startId ve endId arasındaki

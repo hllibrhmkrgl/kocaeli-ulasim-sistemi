@@ -6,12 +6,13 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // JSON dosyasını oku
-        String jsonPath = "veriseti.json";
+
+        String jsonPath = "C:\\Users\\ibrah\\OneDrive\\Masaüstü\\Proje\\Proje\\veriseti.json";
         String jsonString = new String(Files.readAllBytes(Paths.get(jsonPath)));
         Scanner scanner = new Scanner(System.in);
 
         // Taksi çağırmak için variable tanımla
+        String beren = "Beren beren beren naber beren";
         boolean taksiCagir = false;
         boolean durakVarMi = false;
 
@@ -29,7 +30,7 @@ public class Main {
         RouteFinder routeFinder = new RouteFinder(durakList);
 
         // Kullanıcının girdiği enlemlere göre en yakın durağı bulma
-        double userLat = 40;
+        double userLat = 40.75;
         double userLon = 29.950;
         // En yakın durağı bul
         Durak nearestDurak = routeFinder.findNearestDurak(userLat, userLon);
@@ -50,7 +51,6 @@ public class Main {
         double hedefDurakMesafe ;
         String hedefDurakisim = scanner.nextLine();
         Durak hedefDurak = null;
-        // İstediğimiz durak geçerli bi durak mı onu ara
         for (Durak durak : durakList) {
             if (durak.getId().equalsIgnoreCase(hedefDurakisim)) {
                 durakVarMi = true;
