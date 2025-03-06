@@ -47,13 +47,14 @@ public class RouteFinder {
         System.out.println("❌ Belirtilen otobüs rotası bulunamadı.");
     }
 
-
-
-    public void getAllBus() {
-        System.out.println("🚌 Otobüs Durakları ve Bağlantıları:");
+    public String getAllBusInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("🚌 Otobüs Durakları ve Bağlantıları:\n");
         for (Durak d : durakMap.values()) {
             if (d.getType().equals("bus")) {
-                System.out.print("📍 " + d.getId() + " → ");
+                sb.append("📍 ")
+                        .append(d.getId())
+                        .append(" → ");
                 List<String> busNextStops = new ArrayList<>();
                 if (d.getNextStops() != null) {
                     for (NextStop ns : d.getNextStops()) {
@@ -63,15 +64,24 @@ public class RouteFinder {
                         }
                     }
                 }
-                System.out.println(busNextStops.isEmpty() ? "Son Durak" : String.join(", ", busNextStops));
+                if (busNextStops.isEmpty()) {
+                    sb.append("Son Durak\n");
+                } else {
+                    sb.append(String.join(", ", busNextStops)).append("\n");
+                }
             }
         }
+        return sb.toString();
     }
-    public void getAllTram() {
-        System.out.println("🚊 Tramvay Durakları ve Bağlantıları:");
+    public String getAllTramInfo() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("🚊 Tramvay Durakları ve Bağlantıları:\n");
         for (Durak d : durakMap.values()) {
             if (d.getType().equals("tram")) {
-                System.out.print("📍 " + d.getId() + " → ");
+                sb.append("📍 ")
+                        .append(d.getId())
+                        .append(" → ");
+
                 List<String> tramNextStops = new ArrayList<>();
                 if (d.getNextStops() != null) {
                     for (NextStop ns : d.getNextStops()) {
@@ -82,13 +92,17 @@ public class RouteFinder {
                         }
                     }
                 }
-                // Eğer sonraki tramvay durağı yoksa Son Durak yazdır
-                System.out.println(tramNextStops.isEmpty()
-                        ? "Son Durak"
-                        : String.join(", ", tramNextStops));
+                // Eğer sonraki tramvay durağı yoksa "Son Durak" yazdır
+                if (tramNextStops.isEmpty()) {
+                    sb.append("Son Durak\n");
+                } else {
+                    sb.append(String.join(", ", tramNextStops)).append("\n");
+                }
             }
         }
+        return sb.toString();
     }
+
     public Durak getDurakById(String id) {
         return durakMap.get(id);
     }

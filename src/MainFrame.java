@@ -75,16 +75,17 @@ public class MainFrame extends JFrame {
                     // 2 ve 3 numaralı işlemler hedef durak gerektirmiyor
                     case 2:
                         System.out.println("2. Otobüs Duraklarının ismine bakma");
-                        routeFinder.getAllBus();
-                        JOptionPane.showMessageDialog(MainFrame.this,
-                                "Otobüs durakları terminalde listelendi!");
+                        String busInfo = routeFinder.getAllBusInfo();
+                        System.out.println(busInfo);
+                        JOptionPane.showMessageDialog(MainFrame.this, busInfo);
                         break;
+
 
                     case 3:
                         System.out.println("3. Tramvay Duraklarının ismine bakma");
-                        routeFinder.getAllTram();
-                        JOptionPane.showMessageDialog(MainFrame.this,
-                                "Tramvay durakları terminalde listelendi!");
+                        String tramInfo = routeFinder.getAllTramInfo();
+                        System.out.println(tramInfo);
+                        JOptionPane.showMessageDialog(MainFrame.this, tramInfo);
                         break;
 
                     // 1 ve 4 numaralı işlemler için hedef durak girişi gerekiyor
