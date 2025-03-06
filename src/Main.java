@@ -6,39 +6,32 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-
+        // Json Dosyasını Okuma
         String jsonPath = "veriseti.json";
-        String jsonString = new String(Files.readAllBytes(Paths.get(jsonPath)));
+        Root root = JsonReader.readJson(jsonPath);
         Scanner scanner = new Scanner(System.in);
 
-        // Taksi çağırmak için variable tanımla
-        boolean taksiCagir = false;
-        boolean durakVarMi = false;
-
-        // Gson ile parse et
-        Gson gson = new Gson();
-        Root root = gson.fromJson(jsonString, Root.class);
-
-        // Durak listesi al
-        ArrayList<Durak> durakList = root.getDuraklar();
+        // Kullanıcının girdiği enlemlere göre en yakın durağı bulma
+        double userLat = 40.75;
+        double userLon = 29.950;
+                                    // Konum için
+        UserLocationHandler locationHandler = new UserLocationHandler(root.getDuraklar(), root.getTaxi());
+        Durak nearestDurak = locationHandler.findNearestDurak(userLat, userLon);
+        double enYakinDurakMesafe = locationHandler.getDistanceToDurak(userLat, userLon, nearestDurak);
 
         // Taksi ücreti bilgisi
         Taxi taxiInfo = root.getTaxi();
 
         // RouteFinder örneği oluştur
-        RouteFinder routeFinder = new RouteFinder(durakList);
+        RouteFinder routeFinder = new RouteFinder(root.getDuraklar());
 
-        // Kullanıcının girdiği enlemlere göre en yakın durağı bulma
-        double userLat = 40.75;
-        double userLon = 29.950;
-        // En yakın durağı bul
-        Durak nearestDurak = routeFinder.findNearestDurak(userLat, userLon);
-        double enYakinDurakMesafe = routeFinder.haversineTaxiDistance(userLat, userLon, nearestDurak.getLat(), nearestDurak.getLon());
         // Kullanıcı başlangıç bilgileri :
         System.out.println("‼️‼️‼️Bulunduğun durak sana en yakın olan "+nearestDurak.getId()+" olarak belirlenmiştir‼️‼️‼️");
         System.out.println("👉 " + nearestDurak.getId() +
                 " ➡️ " + String.format("%.1f km",
                 enYakinDurakMesafe)+" Uzaklıkta");
+
+        boolean taksiCagir = false;
         if(enYakinDurakMesafe > 3){
             System.out.println("️‼️En yakın durağa olan mesafeniz 3 km den büyük olduğu için taksi çağırılıyor️‼️");
             taksiCagir = true;
@@ -46,11 +39,13 @@ public class Main {
         System.out.println("En yakın durağa olan taksi ücreti : " +
                 String.format("%.2f TL",
                         routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo)));
+        RouteService routeService = new RouteService(root.getDuraklar());
         System.out.println("-Gitmek istediğiniz durağın ismini yazınız .");
-        double hedefDurakMesafe ;
         String hedefDurakisim = scanner.nextLine();
+        double hedefDurakMesafe ;
         Durak hedefDurak = null;
-        for (Durak durak : durakList) {
+        boolean durakVarMi = false;
+        for (Durak durak : root.getDuraklar()) {
             if (durak.getId().equalsIgnoreCase(hedefDurakisim)) {
                 durakVarMi = true;
                 hedefDurak = durak;
@@ -59,10 +54,7 @@ public class Main {
         }
         // Durak var mı yok mu belirle var ise yolları kullanıcıya sun
         if (durakVarMi) {
-            System.out.println("YOL = "+nearestDurak.getId() + " ➡️ "+hedefDurakisim);
-            routeFinder.findMinCostRoute(nearestDurak.getId(),hedefDurak.getId());
-            // Aşağıdaki kodun çalışması için önce üstteki mincostroute yi çağırman gerekli çünkü yol a o atıyo değerleri aşadada yazılıyo
-            routeFinder.printRouteDetails(nearestDurak.getId(),hedefDurakisim+"\n");
+            routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
         } else {
             System.out.println("Hata! Girdiğiniz durak listede bulunmuyor.");
         }
