@@ -20,4 +20,6 @@ public class UserLocationHandler {
     public double getDistanceToDurak(double userLat, double userLon, Durak nearestDurak) {
         return routeFinder.haversineTaxiDistance(userLat, userLon, nearestDurak.getLat(), nearestDurak.getLon());
     }
+
+
 }

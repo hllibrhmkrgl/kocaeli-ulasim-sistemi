@@ -67,12 +67,25 @@ public class RouteFinder {
             }
         }
     }
-
-    public void getAllTram(){
-        System.out.println("Tramvay durakları :");
+    public void getAllTram() {
+        System.out.println("🚊 Tramvay Durakları ve Bağlantıları:");
         for (Durak d : durakMap.values()) {
-            if(d.getType().equals("tram")){
-                System.out.println(d.getId());
+            if (d.getType().equals("tram")) {
+                System.out.print("📍 " + d.getId() + " → ");
+                List<String> tramNextStops = new ArrayList<>();
+                if (d.getNextStops() != null) {
+                    for (NextStop ns : d.getNextStops()) {
+                        Durak nextDurak = durakMap.get(ns.getStopId());
+                        // Sadece tramvay durağına giden bağlantıları listeleyelim
+                        if (nextDurak != null && nextDurak.getType().equals("tram")) {
+                            tramNextStops.add(nextDurak.getId());
+                        }
+                    }
+                }
+                // Eğer sonraki tramvay durağı yoksa Son Durak yazdır
+                System.out.println(tramNextStops.isEmpty()
+                        ? "Son Durak"
+                        : String.join(", ", tramNextStops));
             }
         }
     }
@@ -140,7 +153,6 @@ public class RouteFinder {
         System.out.println("\n✅ Toplam Ücret: " + String.format("%.2f TL", totalCost)+" 💰");
         System.out.println("\n✅ Toplam Süre: " + String.format("%.2f Dk", totalTime)+" ⏳");
     }
-
 
     // Durak adına göre taşıma türünü belirleyip emoji döndüren metot
     private String getTransportIcon(Durak durak) {

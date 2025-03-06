@@ -1,85 +1,50 @@
-import com.google.gson.Gson;
-import com.google.gson.internal.bind.util.ISO8601Utils;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Scanner;
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // Json Dosyasını Okuma
+        // 1) JSON Dosyasını Okuma
         String jsonPath = "veriseti.json";
         Root root = JsonReader.readJson(jsonPath);
-        Scanner scanner = new Scanner(System.in);
-        // Kullanıcının girdiği enlemlere göre en yakın durağı bulma
+
+        // 2) Kullanıcının bulunduğu konum
         double userLat = 40.76520;
         double userLon = 29.96190;
-                                    // Konum için
+
+        // 3) Nesneleri oluştur
         UserLocationHandler locationHandler = new UserLocationHandler(root.getDuraklar(), root.getTaxi());
         Durak nearestDurak = locationHandler.findNearestDurak(userLat, userLon);
         double enYakinDurakMesafe = locationHandler.getDistanceToDurak(userLat, userLon, nearestDurak);
-        // Taksi ücreti bilgisi
+
         Taxi taxiInfo = root.getTaxi();
-        // RouteFinder örneği oluştur
         RouteFinder routeFinder = new RouteFinder(root.getDuraklar());
-        // Kullanıcı başlangıç bilgileri :
-        System.out.println("‼️‼️‼️Bulunduğun durak sana en yakın olan "+nearestDurak.getId()+" olarak belirlenmiştir‼️‼️‼️");
-        System.out.println("👉 " + nearestDurak.getId() + " ➡️ " +
-                String.format("%.1f km", enYakinDurakMesafe) + " Uzaklıkta (Yürüme🚶‍♂️)");
-        boolean taksiCagir = false;
-        if(enYakinDurakMesafe > 3){
-            System.out.println("️️ - - En yakın durağa olan mesafeniz 3 km den büyük olduğu için taksi çağırılıyor️️");
-            taksiCagir = true;
+        RouteService routeService = new RouteService(root.getDuraklar());
+
+        // Terminalde bazı başlangıç bilgilerini gösterelim
+        System.out.println("En yakın durak: " + nearestDurak.getId() +
+                " (" + String.format("%.1f km", enYakinDurakMesafe) + ")");
+
+        // 3 km'den büyükse taksi çağır...
+        if (enYakinDurakMesafe > 3) {
+            System.out.println("Mesafe > 3 km, taksi çağırılıyor...");
         }
-        // Son durakta bulunma Kontrolü
-        if(nearestDurak.getNextStops().isEmpty()){
-            System.out.println("!!! Bulunduğunuz durak son durak bu duraktan işlem yapamazsınız !!!");
-            return;
-        }
-        System.out.println("En yakın durağa olan taksi ücreti : " +
+
+        System.out.println("En yakın durağa olan taksi ücreti: " +
                 String.format("%.2f TL",
                         routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo)));
-        RouteService routeService = new RouteService(root.getDuraklar());
-        /*                                İLK DURAK BULUNDUKTAN SONRAKİ İŞLEMLER                                                     */
-        System.out.println("-Gitmek istediğiniz durağın ismini yazınız .");
-        String hedefDurakisim = scanner.nextLine();
-        double hedefDurakMesafe ;
-        Durak hedefDurak = null;
-        boolean durakVarMi = false;
-        for (Durak durak : root.getDuraklar()) {
-            if (durak.getId().equalsIgnoreCase(hedefDurakisim)) {
-                durakVarMi = true;
-                hedefDurak = durak;
-                break;
-            }
-        }
-        if(!durakVarMi){
-            System.out.println("Hata! Girdiğiniz durak listede bulunmuyor.");
-            return;
-        }
-        System.out.println("Lütfen yapmak istediğiniz işlemi girin. \n"+
-                "1.Gitmek İstediğim durağa olan en kısa yol\n"+
-                "2.Otobüss Duraklarının ismine bakma.\n"+
-                "3.Tramvay Duraklarının ismine bakma.\n"+
-                "4.Sadece Otobüs ile gitmek için yol."
-        );
-        int islem = scanner.nextInt();
-        switch (islem) {
-            case 1:
-                routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
-                break;
-            case 2:
-                routeFinder.getAllBus();
-                break;
-            case 3 :
-                routeFinder.getAllTram();
-                break;
-            case 4:
-                routeFinder.getOnlyBusRoute(nearestDurak.getId(),hedefDurak.getId());
-                break;
-            default:
-                System.out.println("Hatalı Numara");
-        }
+
+        // 4) Artık GUI'yi başlatıyoruz
+        SwingUtilities.invokeLater(() -> {
+            MainFrame frame = new MainFrame(
+                    nearestDurak,
+                    root,
+                    locationHandler,
+                    routeFinder,
+                    routeService,
+                    nearestDurak,
+                    userLat,
+                    userLon
+            );
+            frame.setVisible(true);
+        });
     }
 }
