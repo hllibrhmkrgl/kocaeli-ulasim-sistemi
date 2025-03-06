@@ -7,12 +7,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        String jsonPath = "C:\\Users\\ibrah\\OneDrive\\Masaüstü\\Proje\\Proje\\veriseti.json";
+        String jsonPath = "veriseti.json";
         String jsonString = new String(Files.readAllBytes(Paths.get(jsonPath)));
         Scanner scanner = new Scanner(System.in);
 
         // Taksi çağırmak için variable tanımla
-        String beren = "Beren beren beren naber beren";
         boolean taksiCagir = false;
         boolean durakVarMi = false;
 
@@ -68,21 +67,5 @@ public class Main {
             System.out.println("Hata! Girdiğiniz durak listede bulunmuyor.");
         }
 
-        // Bu aşadaki yer örnek kullanıcıya bulunan en yakın durağı bulur ve mesafesini ve tutucak ücreti söyler
-        /*
-        System.out.println("*****");
-        System.out.println("Bulunduğunuz Konum : "+userLat+" "+userLon);
-        System.out.println("Size olan en yakın durak : "+nearestDurak.getName()+" ve mesafe "+routeFinder.haversineTaxiDistance(userLat,userLon,nearestDurak.getLat(),nearestDurak.getLon())+"km");
-        System.out.println("Ve taksi ücreti : "+routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo));
-        System.out.println("Taksi çağırmak için 1 yazınız .");
-        String cevap = scanner.nextLine();
-        if(cevap.equals("1")){
-            System.out.println("Taksi Çağırılıyor...");
-            taksiCagir = true;
-            userLat = nearestDurak.getLat();
-            userLon = nearestDurak.getLon();
-        }
-        System.out.println(nearestDurak.getName()+" Durağına ulaşıldı "+"Şuanki konumunuz "+userLat+" "+userLon);
-        */
     }
 }
