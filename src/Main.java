@@ -58,9 +58,6 @@ public class Main {
                 break;
             }
         }
-        if(durakVarMi){
-            System.out.println("Hedef durak bulunamadı");
-        }
         // Durak var mı yok mu belirle var ise yolları kullanıcıya sun
         if (durakVarMi) {
             System.out.println("YOL = "+nearestDurak.getId() + " ➡️ "+hedefDurakisim);
