@@ -13,8 +13,8 @@ public class Main {
         Root root = JsonReader.readJson(jsonPath);
         Scanner scanner = new Scanner(System.in);
         // Kullanıcının girdiği enlemlere göre en yakın durağı bulma
-        double userLat = 40;
-        double userLon = 29.950;
+        double userLat = 40.76;
+        double userLon = 30;
                                     // Konum için
         UserLocationHandler locationHandler = new UserLocationHandler(root.getDuraklar(), root.getTaxi());
         Durak nearestDurak = locationHandler.findNearestDurak(userLat, userLon);

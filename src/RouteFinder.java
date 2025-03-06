@@ -127,7 +127,6 @@ public class RouteFinder {
             System.out.println("Rota: " + bestPath+" 🛣️");
         }
     }
-
     /**
      * DFS (Depth-First Search) ile startId'den endId'ye kadar
      * olası tüm yolları dolaşır ve en ucuz olanı bulur.
@@ -173,7 +172,6 @@ public class RouteFinder {
             }
         }
     }
-
     // Getter'lar (opsiyonel)
     public double getMinCost() {
         return minCost;
