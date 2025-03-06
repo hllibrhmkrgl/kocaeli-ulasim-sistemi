@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RouteFinder {
     private Map<String, Durak> durakMap;
@@ -17,14 +14,57 @@ public class RouteFinder {
             durakMap.put(d.getId(), d);
         }
     }
-    public void getAllBus(){
-        System.out.println("Otobüs durakları :");
+    public void getOnlyBusRoute(String from, String to) {
+        if (!durakMap.containsKey(from) || !durakMap.containsKey(to)) {
+            System.out.println("❌ Hatalı durak ID'si!");
+            return;
+        }
+        Queue<List<String>> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        queue.add(Collections.singletonList(from));
+        visited.add(from);
+        while (!queue.isEmpty()) {
+            List<String> path = queue.poll();
+            String lastStop = path.get(path.size() - 1);
+            if (lastStop.equals(to)) {
+                System.out.println("🚌 Otobüs Rotası: " + String.join(" → ", path));
+                return;
+            }
+            Durak currentDurak = durakMap.get(lastStop);
+            if (currentDurak.getNextStops() != null) {
+                for (NextStop ns : currentDurak.getNextStops()) {
+                    Durak nextDurak = durakMap.get(ns.getStopId());
+                    if (nextDurak != null && nextDurak.getType().equals("bus") && !visited.contains(nextDurak.getId())) {
+                        List<String> newPath = new ArrayList<>(path);
+                        newPath.add(nextDurak.getId());
+                        queue.add(newPath);
+                        visited.add(nextDurak.getId());
+                    }
+                }
+            }
+        }
+        System.out.println("❌ Belirtilen otobüs rotası bulunamadı.");
+    }
+
+    public void getAllBus() {
+        System.out.println("🚌 Otobüs Durakları ve Bağlantıları:");
         for (Durak d : durakMap.values()) {
-            if(d.getType().equals("bus")){
-                System.out.println(d.getId());
+            if (d.getType().equals("bus")) {
+                System.out.print("📍 " + d.getId() + " → ");
+                List<String> busNextStops = new ArrayList<>();
+                if (d.getNextStops() != null) {
+                    for (NextStop ns : d.getNextStops()) {
+                        Durak nextDurak = durakMap.get(ns.getStopId());
+                        if (nextDurak != null && nextDurak.getType().equals("bus")) {
+                            busNextStops.add(nextDurak.getId());
+                        }
+                    }
+                }
+                System.out.println(busNextStops.isEmpty() ? "Son Durak" : String.join(", ", busNextStops));
             }
         }
     }
+
     public void getAllTram(){
         System.out.println("Tramvay durakları :");
         for (Durak d : durakMap.values()) {
