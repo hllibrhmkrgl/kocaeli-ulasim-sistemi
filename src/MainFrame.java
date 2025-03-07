@@ -209,13 +209,13 @@ public class MainFrame extends JFrame {
                         output.append("2. Otobüs Duraklarının ismine bakma\n");
                         String busInfo = routeFinder.getAllBusInfo();
                         output.append(busInfo).append("\n");
-                        JOptionPane.showMessageDialog(MainFrame.this, busInfo);
+                        JOptionPane.showMessageDialog(MainFrame.this, "İşlem Başarılı");
                         break;
                     case 3:
                         output.append("3. Tramvay Duraklarının ismine bakma\n");
                         String tramInfo = routeFinder.getAllTramInfo();
                         output.append(tramInfo).append("\n");
-                        JOptionPane.showMessageDialog(MainFrame.this, tramInfo);
+                        JOptionPane.showMessageDialog(MainFrame.this,"İşlem Başarılı");
                         break;
                     case 1:
                     case 4:
