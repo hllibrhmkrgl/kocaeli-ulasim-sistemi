@@ -132,17 +132,14 @@ public class HaritaPanel extends JPanel {
         double usableWidth = w - 2.0 * margin;
         double usableHeight = h - 2.0 * margin;
 
-        // Eğer durak yoksa, mesaj yazıp çıkalım
         if (durakList == null || durakList.isEmpty()) {
             g.drawString("Durak bulunamadı.", 10, 20);
             return;
         }
 
-        // Zoom katsayısına göre "gösterilen" aralık
         double latRangeCurrent = (latRange == 0) ? 1 : (latRange / scaleFactor);
         double lonRangeCurrent = (lonRange == 0) ? 1 : (lonRange / scaleFactor);
 
-        // Merkeze göre güncel min-max değerleri hesapla
         double minLatCurrent = centerLat - latRangeCurrent / 2.0;
         double maxLatCurrent = centerLat + latRangeCurrent / 2.0;
         double minLonCurrent = centerLon - lonRangeCurrent / 2.0;
@@ -151,22 +148,70 @@ public class HaritaPanel extends JPanel {
         double latRangeUsed = maxLatCurrent - minLatCurrent;
         double lonRangeUsed = maxLonCurrent - minLonCurrent;
 
-        // Arka plan resmi varsa, önce onu çizelim.
         if (backgroundImage != null) {
             int bgX1 = (int) (margin + ((minLon - minLonCurrent) / lonRangeUsed) * usableWidth);
             int bgY1 = (int) (margin + ((minLat - minLatCurrent) / latRangeUsed) * usableHeight);
             int bgX2 = (int) (margin + ((maxLon - minLonCurrent) / lonRangeUsed) * usableWidth);
             int bgY2 = (int) (margin + ((maxLat - minLatCurrent) / latRangeUsed) * usableHeight);
-
             g.drawImage(backgroundImage, bgX1, bgY1, bgX2 - bgX1, bgY2 - bgY1, this);
         }
 
-        // Her durağı ekrana çiz
+        // Graphics2D'ye cast edip, stroke ayarını yapıyoruz
+        Graphics2D g2 = (Graphics2D) g;
+        // Bağlantı çizgileri için stroke ayarını kalınlaştırıyoruz
+        g2.setStroke(new BasicStroke(3));
+
+        // Bağlantıları çizelim.
+        g2.setColor(Color.GREEN);
+        for (Durak d : durakList) {
+            double lat = d.getLat();
+            double lon = d.getLon();
+            double xRatio = (lon - minLonCurrent) / lonRangeUsed;
+            double yRatio = (lat - minLatCurrent) / latRangeUsed;
+            int x1 = (int) (margin + xRatio * usableWidth);
+            int y1 = (int) (margin + yRatio * usableHeight);
+
+            if (d.getNextStops() != null) {
+                for (NextStop ns : d.getNextStops()) {
+                    for (Durak d2 : durakList) {
+                        if (d2.getId().equals(ns.getStopId())) {
+                            double lat2 = d2.getLat();
+                            double lon2 = d2.getLon();
+                            double xRatio2 = (lon2 - minLonCurrent) / lonRangeUsed;
+                            double yRatio2 = (lat2 - minLatCurrent) / latRangeUsed;
+                            int x2 = (int) (margin + xRatio2 * usableWidth);
+                            int y2 = (int) (margin + yRatio2 * usableHeight);
+                            g2.drawLine(x1, y1, x2, y2);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (d.getTransfer() != null) {
+                String transferId = d.getTransfer().getTransferStopId();
+                for (Durak d2 : durakList) {
+                    if (d2.getId().equals(transferId)) {
+                        double lat2 = d2.getLat();
+                        double lon2 = d2.getLon();
+                        double xRatio2 = (lon2 - minLonCurrent) / lonRangeUsed;
+                        double yRatio2 = (lat2 - minLatCurrent) / latRangeUsed;
+                        int x2 = (int) (margin + xRatio2 * usableWidth);
+                        int y2 = (int) (margin + yRatio2 * usableHeight);
+                        g2.setColor(Color.ORANGE);
+                        g2.drawLine(x1, y1, x2, y2);
+                        g2.setColor(Color.GREEN);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Durak noktalarını çizelim.
         for (Durak d : durakList) {
             double lat = d.getLat();
             double lon = d.getLon();
 
-            // Oranlar
             double xRatio = (lon - minLonCurrent) / lonRangeUsed;
             double yRatio = (lat - minLatCurrent) / latRangeUsed;
 
@@ -174,16 +219,17 @@ public class HaritaPanel extends JPanel {
             int y = (int) (margin + yRatio * usableHeight);
 
             int pointSize = 8;
-            // Eğer bu durak currentDurak ise, rengi mavi yapalım; değilse kırmızı
             if (currentDurak != null && currentDurak.equals(d)) {
-                g.setColor(Color.BLUE);
+                g2.setColor(Color.BLUE);
             } else {
-                g.setColor(Color.RED);
+                g2.setColor(Color.RED);
             }
-            g.fillOval(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize);
+            g2.fillOval(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize);
 
-            g.setColor(Color.BLACK);
-            g.drawString(d.getId(), x + 6, y);
+            g2.setColor(Color.BLACK);
+            g2.drawString(d.getId(), x + 6, y);
         }
     }
+
+
 }
