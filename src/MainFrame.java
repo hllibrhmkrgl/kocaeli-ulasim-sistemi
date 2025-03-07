@@ -44,6 +44,7 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
+
         // -------------------------------------------------------------------
         // 1) PROFİL PANELİ (sol - WEST)
         // -------------------------------------------------------------------
@@ -153,7 +154,6 @@ public class MainFrame extends JFrame {
         profilPanel.add(discountPanel);
         profilPanel.add(Box.createVerticalStrut(10));
         profilPanel.add(outputScroll);
-
         // -------------------------------------------------------------------
         // 2) HARİTA PANELİ (orta - CENTER)
         // -------------------------------------------------------------------
@@ -209,11 +209,13 @@ public class MainFrame extends JFrame {
                         output.append("2. Otobüs Duraklarının ismine bakma\n");
                         String busInfo = routeFinder.getAllBusInfo();
                         output.append(busInfo).append("\n");
+                        System.out.println(busInfo);
                         JOptionPane.showMessageDialog(MainFrame.this, "İşlem Başarılı");
                         break;
                     case 3:
                         output.append("3. Tramvay Duraklarının ismine bakma\n");
                         String tramInfo = routeFinder.getAllTramInfo();
+                        System.out.println(tramInfo);
                         output.append(tramInfo).append("\n");
                         JOptionPane.showMessageDialog(MainFrame.this,"İşlem Başarılı");
                         break;
@@ -240,12 +242,13 @@ public class MainFrame extends JFrame {
                         if (secilenIslem == 1) {
                             output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
                             routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
-                            output.append(routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId()));
+                            output.append(routeService.printRouteDetails(nearestDurak.getId(), hedefDurak.getId()));
                         } else {
                             output.append("4. Sadece Otobüs ile gitmek için yol\n");
                             routeFinder.getOnlyBusRoute(nearestDurak.getId(), hedefDurak.getId());
+                            output.append(routeFinder.getOnlyBusRouteInfo(nearestDurak.getId(), hedefDurak.getId()));
                         }
-                        output.append("İşlem tamamlandı.\n");
+                        output.append("\nİşlem tamamlandı.\n");
                         JOptionPane.showMessageDialog(MainFrame.this,
                                 "İşlem tamamlandı.");
                         break;
@@ -256,7 +259,6 @@ public class MainFrame extends JFrame {
                 }
                 // outputArea'ya sonucu yaz
                 outputArea.setText(output.toString());
-                System.out.println(output.toString());
             }
         });
 

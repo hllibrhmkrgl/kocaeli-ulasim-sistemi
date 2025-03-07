@@ -46,7 +46,41 @@ public class RouteFinder {
         }
         System.out.println("❌ Belirtilen otobüs rotası bulunamadı.");
     }
+    public String getOnlyBusRouteInfo(String from, String to) {
+        StringBuilder sb = new StringBuilder();
+        if (!durakMap.containsKey(from) || !durakMap.containsKey(to)) {
+            sb.append("❌ Hatalı durak ID'si!");
+            return sb.toString();
+        }
+        Queue<List<String>> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        queue.add(Collections.singletonList(from));
+        visited.add(from);
+        while (!queue.isEmpty()) {
+            List<String> path = queue.poll();
+            String lastStop = path.get(path.size() - 1);
+            if (lastStop.equals(to)) {
+                bestPath = new ArrayList<>(path); // En iyi rotayı kaydet
+                sb.append(printRouteDetailsInfo(from, to)); // Detaylı rota çıktısını al ve ekle
+                return sb.toString();
+            }
+            Durak currentDurak = durakMap.get(lastStop);
+            if (currentDurak.getNextStops() != null) {
+                for (NextStop ns : currentDurak.getNextStops()) {
+                    Durak nextDurak = durakMap.get(ns.getStopId());
+                    if (nextDurak != null && nextDurak.getType().equals("bus") && !visited.contains(nextDurak.getId())) {
+                        List<String> newPath = new ArrayList<>(path);
+                        newPath.add(nextDurak.getId());
+                        queue.add(newPath);
+                        visited.add(nextDurak.getId());
+                    }
+                }
+            }
+        }
 
+        sb.append("❌ Belirtilen otobüs rotası bulunamadı.");
+        return sb.toString();
+    }
     public String getAllBusInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("🚌 Otobüs Durakları ve Bağlantıları:\n");
@@ -102,11 +136,9 @@ public class RouteFinder {
         }
         return sb.toString();
     }
-
     public Durak getDurakById(String id) {
         return durakMap.get(id);
     }
-
     public void printRouteDetails(String startId, String endId) {
         // Eğer bestPath boşsa, önce en ucuz rotayı bul
         if (bestPath.isEmpty()) {
@@ -167,7 +199,68 @@ public class RouteFinder {
         System.out.println("\n✅ Toplam Ücret: " + String.format("%.2f TL", totalCost)+" 💰");
         System.out.println("\n✅ Toplam Süre: " + String.format("%.2f Dk", totalTime)+" ⏳");
     }
-
+    public String printRouteDetailsInfo(String startId, String endId) {
+        StringBuilder sb = new StringBuilder();
+        // Eğer bestPath boşsa, önce en ucuz rotayı bul
+        if (bestPath.isEmpty()) {
+            findMinCostRoute(startId, endId);
+        }
+        // Hâlâ boşsa artık rota gerçekten yok demektir
+        if (bestPath.isEmpty()) {
+            sb.append("❌ Rota bulunamadı!");
+            return sb.toString();
+        }
+        sb.append("\n📍 Rota Detayları:\n");
+        double totalCost = 0;
+        double totalTime = 0;
+        int step = 1;
+        for (int i = 0; i < bestPath.size() - 1; i++) {
+            String currentStopId = bestPath.get(i);
+            String nextStopId = bestPath.get(i + 1);
+            Durak currentDurak = durakMap.get(currentStopId);
+            Durak nextDurak = durakMap.get(nextStopId);
+            if (currentDurak == null || nextDurak == null) continue;
+            NextStop selectedNextStop = null;
+            if (currentDurak.getNextStops() != null) {
+                for (NextStop ns : currentDurak.getNextStops()) {
+                    if (ns.getStopId().equals(nextStopId)) {
+                        selectedNextStop = ns;
+                        break;
+                    }
+                }
+            }
+            Transfer transfer = currentDurak.getTransfer();
+            boolean isTransfer = (transfer != null &&
+                    transfer.getTransferStopId().equals(nextStopId));
+            // Normal geçiş
+            if (selectedNextStop != null) {
+                totalCost += selectedNextStop.getUcret();
+                totalTime += selectedNextStop.getSure();
+                sb.append(step).append(". ").append(currentDurak.getId())
+                        .append(" → ").append(nextDurak.getId())
+                        .append(" (").append(getTransportIcon(currentDurak)).append(")\n");
+                sb.append("📏 Mesafe: ")
+                        .append(String.format("%.1f km", selectedNextStop.getMesafe())).append("\n");
+                sb.append("⏳ Süre: ").append(selectedNextStop.getSure()).append(" dk\n");
+                sb.append("💰 Ücret: ")
+                        .append(String.format("%.2f TL", selectedNextStop.getUcret())).append("\n");
+            }
+            // Transfer geçişi
+            else if (isTransfer) {
+                totalCost += transfer.getTransferUcret();
+                totalTime += transfer.getTransferSure();
+                sb.append(step).append(". ").append(currentDurak.getId())
+                        .append(" → ").append(nextDurak.getId()).append(" (🔄 Transfer)\n");
+                sb.append("⏳ Süre: ").append(transfer.getTransferSure()).append(" dk\n");
+                sb.append("💰 Ücret: ")
+                        .append(String.format("%.2f TL", transfer.getTransferUcret())).append("\n");
+            }
+            step++;
+        }
+        sb.append("\n✅ Toplam Ücret: ").append(String.format("%.2f TL", totalCost)).append(" 💰\n");
+        sb.append("✅ Toplam Süre: ").append(String.format("%.2f dk", totalTime)).append(" ⏳");
+        return sb.toString();
+    }
     // Durak adına göre taşıma türünü belirleyip emoji döndüren metot
     private String getTransportIcon(Durak durak) {
         String durakAdi = durak.getId().toLowerCase();
@@ -194,6 +287,18 @@ public class RouteFinder {
         } else {
             System.out.println("En düşük ücret: " + minCost+" TL 💵");
             System.out.println("Rota: " + bestPath+" 🛣️");
+        }
+    }
+    public String findMinCostRouteInfo(String startId, String endId) {
+        minCost = Double.MAX_VALUE;
+        bestPath.clear();
+        ArrayList<String> currentPath = new ArrayList<>();
+        currentPath.add(startId);
+        dfs(startId, endId, 0.0, currentPath);
+        if (bestPath.isEmpty()) {
+            return "Rota bulunamadı!";
+        } else {
+            return "En düşük ücret: " + minCost + " TL 💵\nRota: " + bestPath + " 🛣️";
         }
     }
     /**
@@ -245,11 +350,9 @@ public class RouteFinder {
     public double getMinCost() {
         return minCost;
     }
-
     public List<String> getBestPath() {
         return bestPath;
     }
-
     /**
      * İki Durak arasındaki mesafeyi hesaplayan haversineDistance.
      */
@@ -259,7 +362,6 @@ public class RouteFinder {
         }
         return haversineTaxiDistance(d1.getLat(), d1.getLon(), d2.getLat(), d2.getLon());
     }
-
     /**
      * Kullanıcı ve durak koordinatlarını (4 double) alarak haversine mesafesini hesaplar.
      */
@@ -273,8 +375,6 @@ public class RouteFinder {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
-
-
     /**
      * Kullanıcı konumunu (userLat, userLon) ve belirli bir durak nesnesinin koordinatlarını kullanarak taksi ücretini hesaplar.
      */
@@ -284,7 +384,6 @@ public class RouteFinder {
         double cost = taxi.getOpeningFee() + (distanceKm * taxi.getCostPerKm());
         return cost;
     }
-
     /**
      * Kullanıcının konumu (userLat, userLon) ile tüm duraklar arasında en yakın olanı bulur.
      */
