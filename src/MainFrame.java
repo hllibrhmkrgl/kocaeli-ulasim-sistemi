@@ -186,7 +186,8 @@ public class MainFrame extends JFrame {
                 "1. Gitmek İstediğim durağa en kısa yol",
                 "2. Otobüs Duraklarının isimlerine bakma",
                 "3. Tramvay Duraklarının isimlerine bakma",
-                "4. Sadece Otobüs ile gitmek için yol"
+                "4. Sadece Otobüs ile gitmek için yol",
+                "5. Sadece Tramvay ile gitmek için yol"
         };
         islemCombo = new JComboBox<>(islemler);
         islemCombo.setMaximumSize(new Dimension(200, 30));
@@ -203,7 +204,6 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 StringBuilder output = new StringBuilder();
                 int secilenIslem = islemCombo.getSelectedIndex() + 1;
-
                 switch (secilenIslem) {
                     case 2:
                         output.append("2. Otobüs Duraklarının ismine bakma\n");
@@ -221,6 +221,7 @@ public class MainFrame extends JFrame {
                         break;
                     case 1:
                     case 4:
+                    case 5:
                         String hedefDurakIsmi = hedefDurakField.getText().trim();
                         boolean durakVarMi = false;
                         Durak hedefDurak = null;
@@ -243,10 +244,15 @@ public class MainFrame extends JFrame {
                             output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
                             routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
                             output.append(routeService.printRouteDetails(nearestDurak.getId(), hedefDurak.getId()));
-                        } else {
-                            output.append("4. Sadece Otobüs ile gitmek için yol\n");
+                        }
+                        else if(secilenIslem == 4){
+                            output.append("4. Sadece Otobüs ile gitmek için yol (TRANSFERSİZ)\n");
                             routeFinder.getOnlyBusRoute(nearestDurak.getId(), hedefDurak.getId());
                             output.append(routeFinder.getOnlyBusRouteInfo(nearestDurak.getId(), hedefDurak.getId()));
+                        } else if (secilenIslem == 5) {
+                            output.append("5. Sadece tramvay ile gitmek için yol (TRANSFERSİZ)\n");
+                            System.out.println(routeFinder.getOnlyTramRouteString(nearestDurak.getId(), hedefDurak.getId()));
+                            output.append(routeFinder.getOnlyTramRouteString(nearestDurak.getId(), hedefDurak.getId()));
                         }
                         output.append("\nİşlem tamamlandı.\n");
                         JOptionPane.showMessageDialog(MainFrame.this,

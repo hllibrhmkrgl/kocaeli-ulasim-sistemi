@@ -46,6 +46,40 @@ public class RouteFinder {
         }
         System.out.println("❌ Belirtilen otobüs rotası bulunamadı.");
     }
+    public String getOnlyTramRouteString(String from, String to) {
+        StringBuilder sb = new StringBuilder();
+        // Durakların var olup olmadığını kontrol et
+        if (!durakMap.containsKey(from) || !durakMap.containsKey(to)) {
+            return "❌ Hatalı durak ID'si!";
+        }
+        Queue<List<String>> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+        queue.add(new ArrayList<>(Arrays.asList(from))); // SingletonList yerine değiştirilebilir liste
+        visited.add(from);
+        while (!queue.isEmpty()) {
+            List<String> path = queue.poll();
+            String lastStop = path.get(path.size() - 1);
+            // Hedef durağa ulaşıldıysa en iyi rota olarak kaydet ve detayları döndür
+            if (lastStop.equals(to)) {
+                bestPath = new ArrayList<>(path);
+                sb.append(printRouteDetailsInfo(from, to));
+                return sb.toString();
+            }
+            Durak currentDurak = durakMap.get(lastStop);
+            if (currentDurak == null || currentDurak.getNextStops() == null) continue; // null kontrolü eklendi
+            for (NextStop ns : currentDurak.getNextStops()) {
+                Durak nextDurak = durakMap.get(ns.getStopId());
+                if (nextDurak != null && "tram".equals(nextDurak.getType()) && !visited.contains(nextDurak.getId())) {
+                    List<String> newPath = new ArrayList<>(path);
+                    newPath.add(nextDurak.getId());
+                    queue.add(newPath);
+                    visited.add(nextDurak.getId());
+                }
+            }
+        }
+        return "❌ Belirtilen tramvay rotası bulunamadı.";
+    }
+
     public String getOnlyBusRouteInfo(String from, String to) {
         StringBuilder sb = new StringBuilder();
         if (!durakMap.containsKey(from) || !durakMap.containsKey(to)) {

@@ -17,7 +17,6 @@ public class Main {
                 UserLocationHandler locationHandler = new UserLocationHandler(root.getDuraklar(), root.getTaxi());
                 Durak nearestDurak = locationHandler.findNearestDurak(userLat, userLon);
                 double enYakinDurakMesafe = locationHandler.getDistanceToDurak(userLat, userLon, nearestDurak);
-
                 Taxi taxiInfo = root.getTaxi();
                 RouteFinder routeFinder = new RouteFinder(root.getDuraklar());
                 RouteService routeService = new RouteService(root.getDuraklar());
