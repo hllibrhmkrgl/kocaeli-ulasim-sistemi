@@ -156,12 +156,10 @@ public class HaritaPanel extends JPanel {
             g.drawImage(backgroundImage, bgX1, bgY1, bgX2 - bgX1, bgY2 - bgY1, this);
         }
 
-        // Graphics2D'ye cast edip, stroke ayarını yapıyoruz
         Graphics2D g2 = (Graphics2D) g;
-        // Bağlantı çizgileri için stroke ayarını kalınlaştırıyoruz
         g2.setStroke(new BasicStroke(3));
 
-        // Bağlantıları çizelim.
+        // Bağlantıları çizelim (Bağlantı çizgilerini yalnızca bir kez çiziyoruz)
         g2.setColor(Color.GREEN);
         for (Durak d : durakList) {
             double lat = d.getLat();
@@ -171,6 +169,7 @@ public class HaritaPanel extends JPanel {
             int x1 = (int) (margin + xRatio * usableWidth);
             int y1 = (int) (margin + yRatio * usableHeight);
 
+            // Bağlantı çizgisi
             if (d.getNextStops() != null) {
                 for (NextStop ns : d.getNextStops()) {
                     for (Durak d2 : durakList) {
@@ -182,12 +181,21 @@ public class HaritaPanel extends JPanel {
                             int x2 = (int) (margin + xRatio2 * usableWidth);
                             int y2 = (int) (margin + yRatio2 * usableHeight);
                             g2.drawLine(x1, y1, x2, y2);
+
+                            // Süreyi yazdır
+                            String sure = ns.getSure() + " dk";
+                            int midX = (x1 + x2) / 2;
+                            int midY = (y1 + y2) / 2;
+                            g2.setColor(Color.green);
+                            g2.setFont(new Font("Arial", Font.BOLD, 15));
+                            g2.drawString(sure, midX, midY);
                             break;
                         }
                     }
                 }
             }
 
+            // Transfer çizgilerini çizerken farklı bir renk kullanıyoruz
             if (d.getTransfer() != null) {
                 String transferId = d.getTransfer().getTransferStopId();
                 for (Durak d2 : durakList) {
@@ -198,16 +206,16 @@ public class HaritaPanel extends JPanel {
                         double yRatio2 = (lat2 - minLatCurrent) / latRangeUsed;
                         int x2 = (int) (margin + xRatio2 * usableWidth);
                         int y2 = (int) (margin + yRatio2 * usableHeight);
-                        g2.setColor(Color.ORANGE);
+                        g2.setColor(Color.ORANGE);  // Transfer çizgileri için turuncu renk
                         g2.drawLine(x1, y1, x2, y2);
-                        g2.setColor(Color.GREEN);
+                        g2.setColor(Color.GREEN);  // Transfer çizgisinin üzerine tekrar yeşil renk
                         break;
                     }
                 }
             }
         }
 
-        // Durak noktalarını çizelim.
+        // Durak noktalarını çizelim
         for (Durak d : durakList) {
             double lat = d.getLat();
             double lon = d.getLon();
@@ -220,9 +228,9 @@ public class HaritaPanel extends JPanel {
 
             int pointSize = 8;
             if (currentDurak != null && currentDurak.equals(d)) {
-                g2.setColor(Color.BLUE);
+                g2.setColor(Color.BLUE);  // Aktif durak için mavi renk
             } else {
-                g2.setColor(Color.RED);
+                g2.setColor(Color.RED);  // Diğer duraklar için kırmızı renk
             }
             g2.fillOval(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize);
 
@@ -230,6 +238,4 @@ public class HaritaPanel extends JPanel {
             g2.drawString(d.getId(), x + 6, y);
         }
     }
-
-
 }
