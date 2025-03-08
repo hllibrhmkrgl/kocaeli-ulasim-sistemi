@@ -118,9 +118,9 @@ public class SadeceOtobus {
         }
         // Kullanıcı tipine göre indirimleri uyguluyoruz
         if (userType != null) {
-            if (userType.equals("student")) {
+            if (userType.equals("Ogrenci")) {
                 totalCost *= 0.8; // Öğrencilere %20 indirim
-            } else if (userType.equals("elderly")) {
+            } else if (userType.equals("Yasli")) {
                 totalCost *= 0.7; // Yaşlılara %30 indirim
             }
         }

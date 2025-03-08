@@ -71,34 +71,68 @@ public class YolBulucu {
     }
 
     public double calculateTotalCost(List<String> path, String userType) {
+        // Null veya boş rota kontrolü
+        if (path == null || path.isEmpty()) {
+            System.out.println("❌ Rota boş, işlem yapılamaz!");
+            return 0.0;
+        }
+
         double totalCost = 0.0;
-        // Path'teki her durak için geçişleri kontrol ediyoruz
+
+        // Path'teki her durak için geçiş ücretlerini kontrol ediyoruz
         for (int i = 0; i < path.size() - 1; i++) {
             Durak currentDurak = durakHaritasi.get(path.get(i));
+
+            // Null kontrolü yapıyoruz
+            if (currentDurak == null || currentDurak.getNextStops() == null) {
+                System.out.println("❌ Geçerli durak bulunamadı veya sonraki duraklar mevcut değil: " + path.get(i));
+                continue; // Eğer geçerli durak yoksa veya sonraki duraklar yoksa bir sonraki durak için devam et
+            }
+
+            // Geçişi kontrol ediyoruz
+            boolean foundNextStop = false;
             for (NextStop nextStop : currentDurak.getNextStops()) {
                 if (nextStop.getStopId().equals(path.get(i + 1))) {
                     // Toplam ücreti ekliyoruz
                     totalCost += nextStop.getUcret();
-                    break;
+                    foundNextStop = true;
+                    break; // İlgili geçişi bulduktan sonra döngüden çıkıyoruz
                 }
             }
+
+            if (!foundNextStop) {
+                System.out.println("❌ Duraklar arasında geçiş bulunamadı: " + path.get(i) + " -> " + path.get(i + 1));
+            }
         }
-        // Transfer ücretlerini ekliyoruz
-        String currentStop = path.get(path.size() - 1);
+
+        // Son durakta transfer var mı? Transfer ücreti eklenmeli.
+        String currentStop = path.get(path.size() - 1); // Son durak
         Durak currentDurak = durakHaritasi.get(currentStop);
-        Transfer transfer = currentDurak.getTransfer();
-        if (transfer != null) {
-            totalCost += transfer.getTransferUcret();
+
+        if (currentDurak != null && currentDurak.getTransfer() != null) {
+            Transfer transfer = currentDurak.getTransfer();
+            String transferStopId = transfer.getTransferStopId();
+
+            // Eğer transfer durak, rotadaki bir durakla eşleşiyorsa, transfer ücreti ekle
+            if (path.contains(transferStopId)) {
+                totalCost += transfer.getTransferUcret();
+            }
         }
+
         // Kullanıcı tipine göre indirimleri uyguluyoruz
-        if (userType.equals("student")) {
-            totalCost *= 0.8; // Öğrencilere %20 indirim
-        } else if (userType.equals("elderly")) {
-            totalCost *= 0.7; // Yaşlılara %30 indirim
+        if (userType != null) {
+            if (userType.equals("Ogrenci")) {
+                totalCost *= 0.8; // Öğrencilere %20 indirim
+            } else if (userType.equals("Yasli")) {
+                totalCost *= 0.7; // Yaşlılara %30 indirim
+            }
         }
+
         // Toplam ücreti döndürüyoruz
         return totalCost;
     }
+
+
     // Toplam süreyi hesaplama (Transfer süreleri dahil)
     public int calculateTotalTime(List<String> path) {
         int totalTime = 0;

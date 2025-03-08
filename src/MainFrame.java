@@ -12,7 +12,6 @@ public class MainFrame extends JFrame {
     private Yazdırma yazdirma;
     private SadeceOtobus sadeceOtobus;
     private SadeceTramvay sadeceTramvay;
-    private RouteService routeService;
     private Durak nearestDurak;
     private double userLat;
     private double userLon;
@@ -28,7 +27,6 @@ public class MainFrame extends JFrame {
     public MainFrame(Durak durak, Root root,
                      UserLocationHandler locationHandler,
                      RouteFinder routeFinder,
-                     RouteService routeService,
                      Durak nearestDurak,
                      double userLat,
                      double userLon,
@@ -46,7 +44,6 @@ public class MainFrame extends JFrame {
         this.sadeceOtobus = sadeceOtobus;
         this.sadeceTramvay = sadeceTramvay;
         this.yolBulucu = yolBulucu;
-        this.routeService = routeService;
         this.nearestDurak = nearestDurak;
         this.userLat = userLat;
         this.userLon = userLon;
@@ -132,9 +129,9 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (rbOgrenci.isSelected()) {
-                    userType = "Öğrenci";
+                    userType = "Ogrenci";
                 } else if (rbYasli.isSelected()) {
-                    userType = "Yaşlı";
+                    userType = "Yasli";
                 } else {
                     userType = "Normal";
                 }
@@ -255,20 +252,22 @@ public class MainFrame extends JFrame {
                         if (secilenIslem == 1) {
                             output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
                             List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
-                            System.out.println(yazdirma.printRouteDetailsInfo(Path));
-                            output.append(yazdirma.printRouteDetailsInfo(yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId())));
+                            double cost = yolBulucu.calculateTotalCost(Path,userType);
+                            System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
+                            output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                         }
                         else if(secilenIslem == 4){
                             output.append("4. Sadece Otobüs ile gitmek için yol (TRANSFERSİZ)\n");
-                            List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
-                            System.out.println(yazdirma.printRouteDetailsInfo(Path));
-                            //routeFinder.getOnlyBusRoute(nearestDurak.getId(), hedefDurak.getId());
-                            output.append(routeFinder.getOnlyBusRouteInfo(nearestDurak.getId(), hedefDurak.getId()));
+                            List<String> Path = sadeceotobus.getOnlyBusRoute(nearestDurak.getId(),hedefDurak.getId());
+                            double cost = sadeceotobus.calculateTotalCost(Path,userType);
+                            System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
+                            output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                         } else if (secilenIslem == 5) {
                             output.append("5. Sadece tramvay ile gitmek için yol (TRANSFERSİZ)\n");
-                            List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
-                            System.out.println(yazdirma.printRouteDetailsInfo(Path));
-                            output.append(routeFinder.getOnlyTramRouteString(nearestDurak.getId(), hedefDurak.getId()));
+                            List<String> Path = sadeceTramvay.getOnlyTramRoute(nearestDurak.getId(),hedefDurak.getId());
+                            double cost = yolBulucu.calculateTotalCost(Path,userType);
+                            System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
+                            output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                         }
                         output.append("\nİşlem tamamlandı.\n");
                         JOptionPane.showMessageDialog(MainFrame.this,
@@ -297,9 +296,9 @@ public class MainFrame extends JFrame {
     // Kullanıcı tipi seçimine göre indirim bilgilerini güncelleyen yardımcı metot
     private void updateDiscountLabels(JLabel header, JLabel value, String userType) {
         String discount;
-        if (userType.equals("Öğrenci")) {
+        if (userType.equals("Ogrenci")) {
             discount = "%20";
-        } else if (userType.equals("Yaşlı")) {
+        } else if (userType.equals("Yasli")) {
             discount = "%30";
         } else {
             discount = "%0";

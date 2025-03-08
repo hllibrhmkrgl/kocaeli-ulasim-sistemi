@@ -13,8 +13,8 @@ public class UserLocationHandler {
         return routeFinder.findNearestDurak(userLat, userLon);
     }
 
-    public double calculateTaxiCost(double userLat, double userLon, Durak nearestDurak) {
-        return routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo);
+    public double calculateTaxiCost(double userLat, double userLon, Durak durak) {
+        return routeFinder.calculateTaxiCost(userLat, userLon, durak, taxiInfo);
     }
 
     public double getDistanceToDurak(double userLat, double userLon, Durak nearestDurak) {

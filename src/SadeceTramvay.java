@@ -64,13 +64,11 @@ public class SadeceTramvay {
         // Path'teki her durak için geçişleri kontrol ediyoruz
         for (int i = 0; i < path.size() - 1; i++) {
             Durak currentDurak = durakMap.get(path.get(i));
-
             // Null kontrolü yapıyoruz
             if (currentDurak == null || currentDurak.getNextStops() == null) {
                 System.out.println("❌ Geçerli durak bulunamadı veya sonraki duraklar mevcut değil: " + path.get(i));
                 continue;
             }
-
             for (NextStop nextStop : currentDurak.getNextStops()) {
                 if (nextStop.getStopId().equals(path.get(i + 1))) {
                     // Toplam ücreti ekliyoruz
@@ -96,9 +94,9 @@ public class SadeceTramvay {
 
         // Kullanıcı tipine göre indirimleri uyguluyoruz
         if (userType != null) {
-            if (userType.equals("student")) {
+            if (userType.equals("Ogrenci")) {
                 totalCost *= 0.8; // Öğrencilere %20 indirim
-            } else if (userType.equals("elderly")) {
+            } else if (userType.equals("Yasli")) {
                 totalCost *= 0.7; // Yaşlılara %30 indirim
             }
         }

@@ -11,7 +11,7 @@ public class Yazdırma {
             durakMap.put(d.getId(), d);
         }
     }
-    public String printRouteDetailsInfo(List<String> path) {
+    public String printRouteDetailsInfo(List<String> path,String userType,Double Cost) {
         StringBuilder sb = new StringBuilder();
 
         // Eğer path boşsa, doğrudan hata mesajı döndür
@@ -68,6 +68,7 @@ public class Yazdırma {
             step++;
         }
         sb.append("\n✅ Toplam Ücret: ").append(String.format("%.2f TL", totalCost)).append(" 💰\n");
+        sb.append("✅ "+userType+" için Toplam Ücret: ").append(String.format("%.2f TL", Cost)).append(" 💰\n");
         sb.append("✅ Toplam Süre: ").append(String.format("%.2f dk", totalTime)).append(" ⏳");
         return sb.toString();
     }

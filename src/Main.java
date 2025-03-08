@@ -23,7 +23,6 @@ public class Main {
                 Yazdırma yazdirma = new Yazdırma(root.getDuraklar());
                 SadeceOtobus sadeceOtobus = new SadeceOtobus(root.getDuraklar());
                 SadeceTramvay sadeceTramvay = new SadeceTramvay(root.getDuraklar());
-                RouteService routeService = new RouteService(root.getDuraklar());
                 System.out.println("En yakın durak: " + nearestDurak.getId() +
                         " (" + String.format("%.1f km", enYakinDurakMesafe) + ")");
                 if (enYakinDurakMesafe > 3) {
@@ -37,7 +36,6 @@ public class Main {
                         root,
                         locationHandler,
                         routeFinder,
-                        routeService,
                         nearestDurak,
                         userLat,
                         userLon,
