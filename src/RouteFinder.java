@@ -177,13 +177,10 @@ public class RouteFinder {
         List<String> path = new ArrayList<>();
         // Yol türüne bağlı olarak doğru path'i seç
         if (routeType.equals("bus")) {
-            System.out.println("bus girdi");
             path = busPath;
         } else if (routeType.equals("tram")) {
-            System.out.println("tramvay girdi");
             path = tramPath;
         } else if(routeType.equals("busMin")) {
-            System.out.println("busminpathe girdi");
             path = bestPath;
         }
         // Eğer path boşsa, önce en ucuz rotayı bul
@@ -192,7 +189,6 @@ public class RouteFinder {
         }
         // Hâlâ boşsa artık rota gerçekten yok demektir
         if (path.isEmpty()) {
-            System.out.println("sasasasa");
             System.out.println("❌ Rota bulunamadı!");
             return;
         }
@@ -251,13 +247,10 @@ public class RouteFinder {
         // Seçilen rota türüne göre yol belirleme
         List<String> path = new ArrayList<>();
         if (routeType.equals("bus")) {
-            System.out.println("Merhaba 1");
             path = busPath;
         } else if (routeType.equals("tram")) {
-            System.out.println("Merhaba 2");
             path = tramPath;
         } else if(routeType.equals("busMin")) {
-            System.out.println("Merhaba 3");
             path = bestPath;
         }
         // Eğer path boşsa, önce en ucuz rotayı bul
@@ -267,7 +260,6 @@ public class RouteFinder {
 
         // Hâlâ boşsa artık rota gerçekten yok demektir
         if (path.isEmpty()) {
-            System.out.println("sa");
             sb.append("❌ Rota bulunamadı!");
             return sb.toString();
         }
