@@ -10,7 +10,7 @@ public class RouteService {
     public Object findAndPrintRoute(String startDurak, String endDurak) {
         System.out.println("YOL = " + startDurak + " ➡️ " + endDurak);
         routeFinder.findMinCostRoute(startDurak, endDurak);
-        routeFinder.printRouteDetails(startDurak, endDurak + "\n");
+        routeFinder.printRouteDetails(startDurak, endDurak,"busMin" + "\n");
         return null;
     }
     public String printRouteDetails(String startDurak, String endDurak) {
@@ -21,7 +21,7 @@ public class RouteService {
         String routeDetails = routeFinder.findMinCostRouteInfo(startDurak, endDurak);
         sb.append(routeDetails).append("\n");
         // Route detaylarını ekleyelim
-        String additionalDetails = routeFinder.printRouteDetailsInfo(startDurak, endDurak);
+        String additionalDetails = routeFinder.printRouteDetailsInfo(startDurak, endDurak,"busMin");
         sb.append(additionalDetails);
         return sb.toString();
     }

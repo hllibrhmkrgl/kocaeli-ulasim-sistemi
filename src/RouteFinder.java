@@ -4,6 +4,10 @@ public class RouteFinder {
     private Map<String, Durak> durakMap;
     private double minCost = Double.MAX_VALUE;
     private ArrayList<String> bestPath = new ArrayList<>();
+    private ArrayList<String> busPath = new ArrayList<>();
+    private ArrayList<String> tramPath = new ArrayList<>();
+    private double busPathCost = Double.MAX_VALUE;
+    private double tramPathCost = Double.MAX_VALUE;
 
     /**
      * Constructor, Durak listesi alır, durakMap oluşturur.
@@ -27,8 +31,8 @@ public class RouteFinder {
             List<String> path = queue.poll();
             String lastStop = path.get(path.size() - 1);
             if (lastStop.equals(to)) {
-                bestPath = new ArrayList<>(path); // En iyi rotayı kaydet
-                printRouteDetails(from, to); // Detaylı rota çıktısını göster
+                busPath = new ArrayList<>(path); // En iyi rotayı kaydet
+                printRouteDetails(from, to,"bus"); // Detaylı rota çıktısını göster
                 return;
             }
             Durak currentDurak = durakMap.get(lastStop);
@@ -61,8 +65,8 @@ public class RouteFinder {
             String lastStop = path.get(path.size() - 1);
             // Hedef durağa ulaşıldıysa en iyi rota olarak kaydet ve detayları döndür
             if (lastStop.equals(to)) {
-                bestPath = new ArrayList<>(path);
-                sb.append(printRouteDetailsInfo(from, to));
+                tramPath = new ArrayList<>(path);
+                sb.append(printRouteDetailsInfo(from, to,"tram"));
                 return sb.toString();
             }
             Durak currentDurak = durakMap.get(lastStop);
@@ -79,7 +83,6 @@ public class RouteFinder {
         }
         return "❌ Belirtilen tramvay rotası bulunamadı.";
     }
-
     public String getOnlyBusRouteInfo(String from, String to) {
         StringBuilder sb = new StringBuilder();
         if (!durakMap.containsKey(from) || !durakMap.containsKey(to)) {
@@ -94,8 +97,8 @@ public class RouteFinder {
             List<String> path = queue.poll();
             String lastStop = path.get(path.size() - 1);
             if (lastStop.equals(to)) {
-                bestPath = new ArrayList<>(path); // En iyi rotayı kaydet
-                sb.append(printRouteDetailsInfo(from, to)); // Detaylı rota çıktısını al ve ekle
+                busPath = new ArrayList<>(path); // En iyi rotayı kaydet
+                sb.append(printRouteDetailsInfo(from, to,"bus")); // Detaylı rota çıktısını al ve ekle
                 return sb.toString();
             }
             Durak currentDurak = durakMap.get(lastStop);
@@ -111,7 +114,6 @@ public class RouteFinder {
                 }
             }
         }
-
         sb.append("❌ Belirtilen otobüs rotası bulunamadı.");
         return sb.toString();
     }
@@ -170,16 +172,27 @@ public class RouteFinder {
         }
         return sb.toString();
     }
-    public Durak getDurakById(String id) {
-        return durakMap.get(id);
-    }
-    public void printRouteDetails(String startId, String endId) {
-        // Eğer bestPath boşsa, önce en ucuz rotayı bul
-        if (bestPath.isEmpty()) {
-            findMinCostRoute(startId, endId);
+    public void printRouteDetails(String startId, String endId, String routeType) {
+        // Seçilen rota türüne göre yol belirleme
+        List<String> path = new ArrayList<>();
+        // Yol türüne bağlı olarak doğru path'i seç
+        if (routeType.equals("bus")) {
+            System.out.println("bus girdi");
+            path = busPath;
+        } else if (routeType.equals("tram")) {
+            System.out.println("tramvay girdi");
+            path = tramPath;
+        } else if(routeType.equals("busMin")) {
+            System.out.println("busminpathe girdi");
+            path = bestPath;
+        }
+        // Eğer path boşsa, önce en ucuz rotayı bul
+        if (path.isEmpty()) {
+            findMinCostRoute(startId, endId); // Bu metod, path'leri dolduracak şekilde güncellenmiş olmalı
         }
         // Hâlâ boşsa artık rota gerçekten yok demektir
-        if (bestPath.isEmpty()) {
+        if (path.isEmpty()) {
+            System.out.println("sasasasa");
             System.out.println("❌ Rota bulunamadı!");
             return;
         }
@@ -187,9 +200,9 @@ public class RouteFinder {
         double totalCost = 0;
         double totalTime = 0;
         int step = 1;
-        for (int i = 0; i < bestPath.size() - 1; i++) {
-            String currentStopId = bestPath.get(i);
-            String nextStopId = bestPath.get(i + 1);
+        for (int i = 0; i < path.size() - 1; i++) {
+            String currentStopId = path.get(i);
+            String nextStopId = path.get(i + 1);
             Durak currentDurak = durakMap.get(currentStopId);
             Durak nextDurak = durakMap.get(nextStopId);
             if (currentDurak == null || nextDurak == null) continue;
@@ -230,30 +243,48 @@ public class RouteFinder {
             }
             step++;
         }
-        System.out.println("\n✅ Toplam Ücret: " + String.format("%.2f TL", totalCost)+" 💰");
-        System.out.println("\n✅ Toplam Süre: " + String.format("%.2f Dk", totalTime)+" ⏳");
+        System.out.println("\n✅ Toplam Ücret: " + String.format("%.2f TL", totalCost) + " 💰");
+        System.out.println("\n✅ Toplam Süre: " + String.format("%.2f Dk", totalTime) + " ⏳");
     }
-    public String printRouteDetailsInfo(String startId, String endId) {
+    public String printRouteDetailsInfo(String startId, String endId, String routeType) {
         StringBuilder sb = new StringBuilder();
-        // Eğer bestPath boşsa, önce en ucuz rotayı bul
-        if (bestPath.isEmpty()) {
-            findMinCostRoute(startId, endId);
+        // Seçilen rota türüne göre yol belirleme
+        List<String> path = new ArrayList<>();
+        if (routeType.equals("bus")) {
+            System.out.println("Merhaba 1");
+            path = busPath;
+        } else if (routeType.equals("tram")) {
+            System.out.println("Merhaba 2");
+            path = tramPath;
+        } else if(routeType.equals("busMin")) {
+            System.out.println("Merhaba 3");
+            path = bestPath;
         }
+        // Eğer path boşsa, önce en ucuz rotayı bul
+        if (path.isEmpty()) {
+            findMinCostRoute(startId, endId); // Bu metod, path'leri dolduracak şekilde güncellenmiş olmalı
+        }
+
         // Hâlâ boşsa artık rota gerçekten yok demektir
-        if (bestPath.isEmpty()) {
+        if (path.isEmpty()) {
+            System.out.println("sa");
             sb.append("❌ Rota bulunamadı!");
             return sb.toString();
         }
+
         sb.append("\n📍 Rota Detayları:\n");
         double totalCost = 0;
         double totalTime = 0;
         int step = 1;
-        for (int i = 0; i < bestPath.size() - 1; i++) {
-            String currentStopId = bestPath.get(i);
-            String nextStopId = bestPath.get(i + 1);
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            String currentStopId = path.get(i);
+            String nextStopId = path.get(i + 1);
             Durak currentDurak = durakMap.get(currentStopId);
             Durak nextDurak = durakMap.get(nextStopId);
+
             if (currentDurak == null || nextDurak == null) continue;
+
             NextStop selectedNextStop = null;
             if (currentDurak.getNextStops() != null) {
                 for (NextStop ns : currentDurak.getNextStops()) {
@@ -263,9 +294,11 @@ public class RouteFinder {
                     }
                 }
             }
+
             Transfer transfer = currentDurak.getTransfer();
             boolean isTransfer = (transfer != null &&
                     transfer.getTransferStopId().equals(nextStopId));
+
             // Normal geçiş
             if (selectedNextStop != null) {
                 totalCost += selectedNextStop.getUcret();
@@ -291,11 +324,12 @@ public class RouteFinder {
             }
             step++;
         }
+
         sb.append("\n✅ Toplam Ücret: ").append(String.format("%.2f TL", totalCost)).append(" 💰\n");
         sb.append("✅ Toplam Süre: ").append(String.format("%.2f dk", totalTime)).append(" ⏳");
+
         return sb.toString();
     }
-    // Durak adına göre taşıma türünü belirleyip emoji döndüren metot
     private String getTransportIcon(Durak durak) {
         String durakAdi = durak.getId().toLowerCase();
         if (durakAdi.contains("bus")) return "🚌 Otobüs";
@@ -304,10 +338,6 @@ public class RouteFinder {
         if (durakAdi.contains("ferry")) return "⛴️ Feribot";
         return "🚖 Taksi";
     }
-    /**
-     * Belirtilen startId ve endId arasındaki
-     * en düşük ücretli rotayı bulur ve ekrana yazdırır.
-     */
     public void findMinCostRoute(String startId, String endId) {
         minCost = Double.MAX_VALUE;
         bestPath.clear();
@@ -335,10 +365,6 @@ public class RouteFinder {
             return "En düşük ücret: " + minCost + " TL 💵\nRota: " + bestPath + " 🛣️";
         }
     }
-    /**
-     * DFS (Depth-First Search) ile startId'den endId'ye kadar
-     * olası tüm yolları dolaşır ve en ucuz olanı bulur.
-     */
     private void dfs(String currentId, String endId, double currentCost, List<String> currentPath) {
         // Eğer hedef durağa ulaştıysak, mevcut maliyetin minCost'tan düşük olup olmadığına bakarız.
         if (currentId.equals(endId)) {
@@ -380,25 +406,18 @@ public class RouteFinder {
             }
         }
     }
-    // Getter'lar (opsiyonel)
     public double getMinCost() {
         return minCost;
     }
     public List<String> getBestPath() {
         return bestPath;
     }
-    /**
-     * İki Durak arasındaki mesafeyi hesaplayan haversineDistance.
-     */
     public double haversineDistance(Durak d1, Durak d2) {
         if (d1 == null || d2 == null) {
             throw new IllegalArgumentException("D1 veya D2 null olamaz.");
         }
         return haversineTaxiDistance(d1.getLat(), d1.getLon(), d2.getLat(), d2.getLon());
     }
-    /**
-     * Kullanıcı ve durak koordinatlarını (4 double) alarak haversine mesafesini hesaplar.
-     */
     public double haversineTaxiDistance(double lat1, double lon1, double lat2, double lon2) {
         final double R = 6371.0; // Dünya yarıçapı (km)
         double dLat = Math.toRadians(lat2 - lat1);
@@ -409,18 +428,12 @@ public class RouteFinder {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
-    /**
-     * Kullanıcı konumunu (userLat, userLon) ve belirli bir durak nesnesinin koordinatlarını kullanarak taksi ücretini hesaplar.
-     */
     public double calculateTaxiCost(double userLat, double userLon, Durak durak, Taxi taxi) {
         // Kullanıcı ile durak arasındaki mesafeyi haversineTaxiDistance kullanarak hesapla
         double distanceKm = haversineTaxiDistance(userLat, userLon, durak.getLat(), durak.getLon());
         double cost = taxi.getOpeningFee() + (distanceKm * taxi.getCostPerKm());
         return cost;
     }
-    /**
-     * Kullanıcının konumu (userLat, userLon) ile tüm duraklar arasında en yakın olanı bulur.
-     */
     public Durak findNearestDurak(double userLat, double userLon) {
         Durak nearest = null;
         double minDistance = Double.MAX_VALUE;
@@ -435,5 +448,4 @@ public class RouteFinder {
         }
         return nearest;
     }
-
 }

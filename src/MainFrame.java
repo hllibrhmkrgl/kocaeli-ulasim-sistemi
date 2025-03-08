@@ -242,7 +242,8 @@ public class MainFrame extends JFrame {
                         }
                         if (secilenIslem == 1) {
                             output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
-                            routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
+                         //   routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
+                            System.out.println(routeService.printRouteDetails(nearestDurak.getId(), hedefDurak.getId()));
                             output.append(routeService.printRouteDetails(nearestDurak.getId(), hedefDurak.getId()));
                         }
                         else if(secilenIslem == 4){
