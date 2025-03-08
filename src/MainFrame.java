@@ -195,8 +195,9 @@ public class MainFrame extends JFrame {
                 "1. Gitmek İstediğim durağa en kısa yol",
                 "2. Otobüs Duraklarının isimlerine bakma",
                 "3. Tramvay Duraklarının isimlerine bakma",
-                "4. Sadece Otobüs ile gitmek için yol",
-                "5. Sadece Tramvay ile gitmek için yol"
+                "4. Sadece Otobüs ile gitmek için yol(Transfersiz)",
+                "5. Sadece Tramvay ile gitmek için yol(Transfersiz)",
+                "6. Konumdan Durağa Taksi Ücreti."
         };
         islemCombo = new JComboBox<>(islemler);
         islemCombo.setMaximumSize(new Dimension(200, 30));
@@ -231,6 +232,7 @@ public class MainFrame extends JFrame {
                     case 1:
                     case 4:
                     case 5:
+                    case 6:
                         String hedefDurakIsmi = hedefDurakField.getText().trim();
                         boolean durakVarMi = false;
                         Durak hedefDurak = null;
@@ -268,6 +270,13 @@ public class MainFrame extends JFrame {
                             double cost = yolBulucu.calculateTotalCost(Path,userType);
                             System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                             output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
+                        }
+                        else if(secilenIslem == 6){
+                            System.out.println("6. Konumdan Durağa Taksi Ücreti.");
+                            double taxiCost = routeFinder.calculateTaxiCost(userLat,userLon,hedefDurak,taxiInfo);
+                            double distance = routeFinder.haversineTaxiDistance(userLat,userLon,hedefDurak.getLat(),hedefDurak.getLon());
+                            System.out.println(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,distance));
+                            output.append(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,distance));
                         }
                         output.append("\nİşlem tamamlandı.\n");
                         JOptionPane.showMessageDialog(MainFrame.this,

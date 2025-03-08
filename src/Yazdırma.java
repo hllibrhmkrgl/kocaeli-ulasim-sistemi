@@ -80,4 +80,15 @@ public class Yazdırma {
         if (durakAdi.contains("ferry")) return "⛴️ Feribot";
         return "🚖 Taksi";
     }
+    public String TaxiDetails(String startId, String endId, double cost, Double distance) {
+        // Ücret ve mesafeyi iki basamağa yuvarlıyoruz
+        String formattedCost = String.format("%.2f", cost); // Ücret
+        String formattedDistance = String.format("%.2f", distance); // Mesafe
+
+        // Detaylı açıklamayı oluşturuyoruz
+        String details = String.format("Başlangıç: %s\nBitiş: %s\nÜcret: %s TL\nMesafe: %s km",
+                startId, endId, formattedCost, formattedDistance);
+        return details;
+    }
+
 }
