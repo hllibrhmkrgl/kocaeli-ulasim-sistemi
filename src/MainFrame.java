@@ -60,7 +60,7 @@ public class MainFrame extends JFrame {
                       +" TL");
         JLabel lblKoordinat = new JLabel("Koordinatlar: " + userLat + " , " + userLon);
 
-        // Genişlik ayarları: Yazıların tüm genişliği kaplaması için
+
         lblDurakBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblDurakBilgisi.getPreferredSize().height));
         lblKoordinat.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblKoordinat.getPreferredSize().height));
         BaslangicTaksiBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, BaslangicTaksiBilgisi.getPreferredSize().height));
@@ -68,7 +68,7 @@ public class MainFrame extends JFrame {
         BaslangicTaksiBilgisi.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblKoordinat.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Kullanıcı tipi seçimi için radiobutton paneli
+
         JPanel userTypePanel = new JPanel();
         userTypePanel.setLayout(new BoxLayout(userTypePanel, BoxLayout.Y_AXIS));
         userTypePanel.setBorder(BorderFactory.createTitledBorder("Kullanıcı Tipi"));

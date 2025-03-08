@@ -36,7 +36,7 @@ public class HaritaPanel extends JPanel {
         this.durakList = durakList;
 
         // Harita resmi yükleme (örneğin "harita.png" dosyası)
-        backgroundImage = new ImageIcon("harita.png").getImage();
+        backgroundImage = new ImageIcon("izmit_map.jpg").getImage();
 
         if (durakList != null && !durakList.isEmpty()) {
             // İlk durak değerleriyle başla

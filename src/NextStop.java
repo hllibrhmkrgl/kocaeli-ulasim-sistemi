@@ -4,7 +4,7 @@ public class NextStop {
     private int sure;
     private double ucret;
 
-    // Getter & Setter
+
     public String getStopId() {
         return stopId;
     }
