@@ -7,12 +7,6 @@ public class RouteService {
         this.routeFinder = new RouteFinder(durakList);
     }
 
-    public Object findAndPrintRoute(String startDurak, String endDurak) {
-        System.out.println("YOL = " + startDurak + " ➡️ " + endDurak);
-        routeFinder.findMinCostRoute(startDurak, endDurak);
-        routeFinder.printRouteDetails(startDurak, endDurak,"busMin" + "\n");
-        return null;
-    }
     public String printRouteDetails(String startDurak, String endDurak) {
         StringBuilder sb = new StringBuilder();
         // Yol bilgisini ekleyelim
@@ -25,5 +19,4 @@ public class RouteService {
         sb.append(additionalDetails);
         return sb.toString();
     }
-
 }

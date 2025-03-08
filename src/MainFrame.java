@@ -1,11 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFrame extends JFrame {
     private Root root;
     private UserLocationHandler locationHandler;
     private RouteFinder routeFinder;
+    private YolBulucu yolBulucu;
+    private Yazdırma yazdirma;
+    private SadeceOtobus sadeceOtobus;
+    private SadeceTramvay sadeceTramvay;
     private RouteService routeService;
     private Durak nearestDurak;
     private double userLat;
@@ -26,12 +32,20 @@ public class MainFrame extends JFrame {
                      Durak nearestDurak,
                      double userLat,
                      double userLon,
-                     Taxi taxiInfo) {
+                     Taxi taxiInfo,
+                     YolBulucu yolBulucu,
+                     Yazdırma yazdirma,
+                     SadeceOtobus sadeceotobus,
+                     SadeceTramvay sadeceTramvay) {
 
         // Gelen parametreleri sakla
         this.root = root;
         this.locationHandler = locationHandler;
         this.routeFinder = routeFinder;
+        this.yazdirma = yazdirma;
+        this.sadeceOtobus = sadeceOtobus;
+        this.sadeceTramvay = sadeceTramvay;
+        this.yolBulucu = yolBulucu;
         this.routeService = routeService;
         this.nearestDurak = nearestDurak;
         this.userLat = userLat;
@@ -43,8 +57,6 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
-
         // -------------------------------------------------------------------
         // 1) PROFİL PANELİ (sol - WEST)
         // -------------------------------------------------------------------
@@ -242,17 +254,20 @@ public class MainFrame extends JFrame {
                         }
                         if (secilenIslem == 1) {
                             output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
-                         //   routeService.findAndPrintRoute(nearestDurak.getId(), hedefDurak.getId());
-                            System.out.println(routeService.printRouteDetails(nearestDurak.getId(), hedefDurak.getId()));
-                            output.append(routeService.printRouteDetails(nearestDurak.getId(), hedefDurak.getId()));
+                            List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
+                            System.out.println(yazdirma.printRouteDetailsInfo(Path));
+                            output.append(yazdirma.printRouteDetailsInfo(yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId())));
                         }
                         else if(secilenIslem == 4){
                             output.append("4. Sadece Otobüs ile gitmek için yol (TRANSFERSİZ)\n");
-                            routeFinder.getOnlyBusRoute(nearestDurak.getId(), hedefDurak.getId());
+                            List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
+                            System.out.println(yazdirma.printRouteDetailsInfo(Path));
+                            //routeFinder.getOnlyBusRoute(nearestDurak.getId(), hedefDurak.getId());
                             output.append(routeFinder.getOnlyBusRouteInfo(nearestDurak.getId(), hedefDurak.getId()));
                         } else if (secilenIslem == 5) {
                             output.append("5. Sadece tramvay ile gitmek için yol (TRANSFERSİZ)\n");
-                            System.out.println(routeFinder.getOnlyTramRouteString(nearestDurak.getId(), hedefDurak.getId()));
+                            List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
+                            System.out.println(yazdirma.printRouteDetailsInfo(Path));
                             output.append(routeFinder.getOnlyTramRouteString(nearestDurak.getId(), hedefDurak.getId()));
                         }
                         output.append("\nİşlem tamamlandı.\n");

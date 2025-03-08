@@ -19,6 +19,10 @@ public class Main {
                 double enYakinDurakMesafe = locationHandler.getDistanceToDurak(userLat, userLon, nearestDurak);
                 Taxi taxiInfo = root.getTaxi();
                 RouteFinder routeFinder = new RouteFinder(root.getDuraklar());
+                YolBulucu yolBulucu = new YolBulucu(root.getDuraklar());
+                Yazdırma yazdirma = new Yazdırma(root.getDuraklar());
+                SadeceOtobus sadeceOtobus = new SadeceOtobus(root.getDuraklar());
+                SadeceTramvay sadeceTramvay = new SadeceTramvay(root.getDuraklar());
                 RouteService routeService = new RouteService(root.getDuraklar());
                 System.out.println("En yakın durak: " + nearestDurak.getId() +
                         " (" + String.format("%.1f km", enYakinDurakMesafe) + ")");
@@ -37,7 +41,11 @@ public class Main {
                         nearestDurak,
                         userLat,
                         userLon,
-                        taxiInfo
+                        taxiInfo,
+                        yolBulucu,
+                        yazdirma,
+                        sadeceOtobus,
+                        sadeceTramvay
                 );
                 frame.setVisible(true);
             } catch (Exception e) {

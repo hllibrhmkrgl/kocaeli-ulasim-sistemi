@@ -3,15 +3,17 @@ import java.util.*;
 public class RouteFinder {
     private Map<String, Durak> durakMap;
     private double minCost = Double.MAX_VALUE;
+    private double busCost = Double.MAX_VALUE;
+    private double tramCost = Double.MAX_VALUE;
     private ArrayList<String> bestPath = new ArrayList<>();
     private ArrayList<String> busPath = new ArrayList<>();
     private ArrayList<String> tramPath = new ArrayList<>();
     private double busPathCost = Double.MAX_VALUE;
     private double tramPathCost = Double.MAX_VALUE;
-
-    /**
-     * Constructor, Durak listesi alır, durakMap oluşturur.
-     */
+    // Getter metodu ekleyin
+    public Map<String, Durak> getDurakHaritasi() {
+        return durakMap;
+    }
     public RouteFinder(ArrayList<Durak> durakList) {
         durakMap = new HashMap<>();
         for (Durak d : durakList) {
@@ -257,26 +259,21 @@ public class RouteFinder {
         if (path.isEmpty()) {
             findMinCostRoute(startId, endId); // Bu metod, path'leri dolduracak şekilde güncellenmiş olmalı
         }
-
         // Hâlâ boşsa artık rota gerçekten yok demektir
         if (path.isEmpty()) {
             sb.append("❌ Rota bulunamadı!");
             return sb.toString();
         }
-
         sb.append("\n📍 Rota Detayları:\n");
         double totalCost = 0;
         double totalTime = 0;
         int step = 1;
-
         for (int i = 0; i < path.size() - 1; i++) {
             String currentStopId = path.get(i);
             String nextStopId = path.get(i + 1);
             Durak currentDurak = durakMap.get(currentStopId);
             Durak nextDurak = durakMap.get(nextStopId);
-
             if (currentDurak == null || nextDurak == null) continue;
-
             NextStop selectedNextStop = null;
             if (currentDurak.getNextStops() != null) {
                 for (NextStop ns : currentDurak.getNextStops()) {
@@ -286,7 +283,6 @@ public class RouteFinder {
                     }
                 }
             }
-
             Transfer transfer = currentDurak.getTransfer();
             boolean isTransfer = (transfer != null &&
                     transfer.getTransferStopId().equals(nextStopId));
@@ -404,6 +400,12 @@ public class RouteFinder {
     public List<String> getBestPath() {
         return bestPath;
     }
+    public List<String> getBusPath() {
+        return busPath;
+    }
+    public List<String> getTramPath() {
+        return tramPath;
+    }
     public double haversineDistance(Durak d1, Durak d2) {
         if (d1 == null || d2 == null) {
             throw new IllegalArgumentException("D1 veya D2 null olamaz.");
@@ -439,5 +441,37 @@ public class RouteFinder {
             }
         }
         return nearest;
+    }
+
+    public double getBusCost() {
+        return busCost;
+    }
+
+    public void setBusCost(double busCost) {
+        this.busCost = busCost;
+    }
+
+    public double getTramCost() {
+        return tramCost;
+    }
+
+    public void setTramCost(double tramCost) {
+        this.tramCost = tramCost;
+    }
+
+    public double getBusPathCost() {
+        return busPathCost;
+    }
+
+    public void setBusPathCost(double busPathCost) {
+        this.busPathCost = busPathCost;
+    }
+
+    public double getTramPathCost() {
+        return tramPathCost;
+    }
+
+    public void setTramPathCost(double tramPathCost) {
+        this.tramPathCost = tramPathCost;
     }
 }
