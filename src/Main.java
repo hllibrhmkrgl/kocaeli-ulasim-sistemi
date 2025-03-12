@@ -14,9 +14,14 @@ public class Main {
             try {
                 String jsonPath = "veriseti.json";
                 Root root = JsonReader.readJson(jsonPath);
+                Coordinates coordinates = new Coordinates();
+                coordinates.setUserLatGirilen(userLat);
+                coordinates.setUserLonGirilen(userLon);
                 UserLocationHandler locationHandler = new UserLocationHandler(root.getDuraklar(), root.getTaxi());
-                Durak nearestDurak = locationHandler.findNearestDurak(userLat, userLon);
-                double enYakinDurakMesafe = locationHandler.getDistanceToDurak(userLat, userLon, nearestDurak);
+                Durak nearestDurak = locationHandler.findNearestDurak(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen());
+                coordinates.setUserLatGuncel(nearestDurak.getLat());
+                coordinates.setUserLonGuncel(nearestDurak.getLon());
+                double enYakinDurakMesafe = locationHandler.getDistanceToDurak(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak);
                 Taxi taxiInfo = root.getTaxi();
                 RouteFinder routeFinder = new RouteFinder(root.getDuraklar());
                 YolBulucu yolBulucu = new YolBulucu(root.getDuraklar());
@@ -30,15 +35,14 @@ public class Main {
                 }
                 System.out.println("En yakın durağa olan taksi ücreti: " +
                         String.format("%.2f TL",
-                                routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo)));
+                                routeFinder.calculateTaxiCost(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak, taxiInfo)));
                 MainFrame frame = new MainFrame(
                         nearestDurak,
                         root,
                         locationHandler,
                         routeFinder,
                         nearestDurak,
-                        userLat,
-                        userLon,
+                        coordinates,
                         taxiInfo,
                         yolBulucu,
                         yazdirma,

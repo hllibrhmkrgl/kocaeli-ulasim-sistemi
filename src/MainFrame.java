@@ -10,11 +10,10 @@ public class MainFrame extends JFrame {
     private RouteFinder routeFinder;
     private YolBulucu yolBulucu;
     private Yazdırma yazdirma;
+    private Coordinates coordinates;
     private SadeceOtobus sadeceOtobus;
     private SadeceTramvay sadeceTramvay;
     private Durak nearestDurak;
-    private double userLat;
-    private double userLon;
     private String userType = "Normal"; // Varsayılan kullanıcı tipi
     private Taxi taxi ;
     // Arayüz bileşenleri (Hedef durak giriş alanı, ComboBox, Buton)
@@ -28,8 +27,7 @@ public class MainFrame extends JFrame {
                      UserLocationHandler locationHandler,
                      RouteFinder routeFinder,
                      Durak nearestDurak,
-                     double userLat,
-                     double userLon,
+                     Coordinates coordinates,
                      Taxi taxiInfo,
                      YolBulucu yolBulucu,
                      Yazdırma yazdirma,
@@ -45,8 +43,7 @@ public class MainFrame extends JFrame {
         this.sadeceTramvay = sadeceTramvay;
         this.yolBulucu = yolBulucu;
         this.nearestDurak = nearestDurak;
-        this.userLat = userLat;
-        this.userLon = userLon;
+        this.coordinates = coordinates;
         this.taxi = taxiInfo;
         // Temel pencere ayarları
         setTitle("Ulaşım Uygulaması");
@@ -65,9 +62,10 @@ public class MainFrame extends JFrame {
         JLabel lblDurakBilgisi = new JLabel("En Yakın Durak: " +
                 (nearestDurak != null ? nearestDurak.getId() : "Bilinmiyor"));
         JLabel BaslangicTaksiBilgisi = new JLabel("En yakın durağa Taksi ücreti : "+
-                routeFinder.calculateTaxiCost(userLat, userLon, nearestDurak, taxiInfo)
+                routeFinder.calculateTaxiCost(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak, taxiInfo)
                       +" TL");
-        JLabel lblKoordinat = new JLabel("Koordinatlar: " + userLat + " , " + userLon);
+        JLabel lblKoordinat = new JLabel("Koordinatlar: " + coordinates.getUserLatGirilen() + " , " + coordinates.getUserLonGirilen());
+
 
 
         lblDurakBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblDurakBilgisi.getPreferredSize().height));
@@ -253,6 +251,7 @@ public class MainFrame extends JFrame {
                         }
                         if (secilenIslem == 1) {
                             output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
+                            System.out.println(coordinates.getUserLatGuncel());
                             List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
                             double cost = yolBulucu.calculateTotalCost(Path,userType);
                             System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
@@ -273,8 +272,8 @@ public class MainFrame extends JFrame {
                         }
                         else if(secilenIslem == 6){
                             System.out.println("6. Konumdan Durağa Taksi Ücreti.");
-                            double taxiCost = routeFinder.calculateTaxiCost(userLat,userLon,hedefDurak,taxiInfo);
-                            double distance = routeFinder.haversineTaxiDistance(userLat,userLon,hedefDurak.getLat(),hedefDurak.getLon());
+                            double taxiCost = routeFinder.calculateTaxiCost(coordinates.getUserLatGuncel(),coordinates.getUserLonGuncel(),hedefDurak,taxiInfo);
+                            double distance = routeFinder.haversineTaxiDistance(coordinates.getUserLatGuncel(),coordinates.getUserLonGuncel(),hedefDurak.getLat(),hedefDurak.getLon());
                             System.out.println(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,distance));
                             output.append(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,distance));
                         }
