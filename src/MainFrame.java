@@ -45,6 +45,7 @@ public class MainFrame extends JFrame {
         this.nearestDurak = nearestDurak;
         this.coordinates = coordinates;
         this.taxi = taxiInfo;
+        double enYakinDurakMesafe = locationHandler.getDistanceToDurak(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak);
         // Temel pencere ayarları
         setTitle("Ulaşım Uygulaması");
         setSize(1280, 720);
@@ -65,8 +66,6 @@ public class MainFrame extends JFrame {
                 routeFinder.calculateTaxiCost(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak, taxiInfo)
                       +" TL");
         JLabel lblKoordinat = new JLabel("Koordinatlar: " + coordinates.getUserLatGirilen() + " , " + coordinates.getUserLonGirilen());
-
-
 
         lblDurakBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblDurakBilgisi.getPreferredSize().height));
         lblKoordinat.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblKoordinat.getPreferredSize().height));
