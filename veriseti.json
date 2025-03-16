@@ -105,7 +105,7 @@
         "id": "bus_41burda",
         "name": "41 Burda AVM (Bus)",
         "type": "bus",
-        "lat": 40.77731,
+        "lat": 40.78,
         "lon": 29.92512,
         "sonDurak": true,
         "nextStops": [],

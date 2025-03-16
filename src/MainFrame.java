@@ -23,6 +23,8 @@ public class MainFrame extends JFrame {
     // Çıktıları göstermek için JTextArea
     private JTextArea outputArea;
 
+    private MainFrameLogic mainFrameLogic;
+
     public MainFrame(Durak durak, Root root,
                      UserLocationHandler locationHandler,
                      RouteFinder routeFinder,
@@ -45,6 +47,18 @@ public class MainFrame extends JFrame {
         this.nearestDurak = nearestDurak;
         this.coordinates = coordinates;
         this.taxi = taxiInfo;
+        this.mainFrameLogic = new MainFrameLogic(
+                this.root,
+                this.locationHandler,
+                this.routeFinder,
+                this.nearestDurak,
+                this.coordinates,
+                this.taxi,
+                this.yolBulucu,
+                this.yazdirma,
+                this.sadeceOtobus,
+                this.sadeceTramvay
+        );
         double enYakinDurakMesafe = locationHandler.getDistanceToDurak(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak);
         // Temel pencere ayarları
         setTitle("Ulaşım Uygulaması");
@@ -209,86 +223,15 @@ public class MainFrame extends JFrame {
         calistirButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                StringBuilder output = new StringBuilder();
                 int secilenIslem = islemCombo.getSelectedIndex() + 1;
-                switch (secilenIslem) {
-                    case 2:
-                        output.append("2. Otobüs Duraklarının ismine bakma\n");
-                        String busInfo = routeFinder.getAllBusInfo();
-                        output.append(busInfo).append("\n");
-                        System.out.println(busInfo);
-                        JOptionPane.showMessageDialog(MainFrame.this, "İşlem Başarılı");
-                        break;
-                    case 3:
-                        output.append("3. Tramvay Duraklarının ismine bakma\n");
-                        String tramInfo = routeFinder.getAllTramInfo();
-                        System.out.println(tramInfo);
-                        output.append(tramInfo).append("\n");
-                        JOptionPane.showMessageDialog(MainFrame.this,"İşlem Başarılı");
-                        break;
-                    case 1:
-                    case 4:
-                    case 5:
-                    case 6:
-                        String hedefDurakIsmi = hedefDurakField.getText().trim();
-                        boolean durakVarMi = false;
-                        Durak hedefDurak = null;
-                        for (Durak d : root.getDuraklar()) {
-                            if (d.getId().equalsIgnoreCase(hedefDurakIsmi)) {
-                                hedefDurak = d;
-                                durakVarMi = true;
-                                break;
-                            }
-                        }
-                        if (!durakVarMi) {
-                            JOptionPane.showMessageDialog(MainFrame.this,
-                                    "Hata! Girdiğiniz durak listede bulunmuyor.");
-                            output.append("Hata! Girdiğiniz durak listede bulunmuyor.\n");
-                            System.out.println("Hata! Girdiğiniz durak listede bulunmuyor.");
-                            outputArea.setText(output.toString());
-                            return;
-                        }
-                        if (secilenIslem == 1) {
-                            output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
-                            System.out.println(coordinates.getUserLatGuncel());
-                            List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(),hedefDurak.getId());
-                            double cost = yolBulucu.calculateTotalCost(Path,userType);
-                            System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
-                            output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
-                        }
-                        else if(secilenIslem == 4){
-                            output.append("4. Sadece Otobüs ile gitmek için yol (TRANSFERSİZ)\n");
-                            List<String> Path = sadeceotobus.getOnlyBusRoute(nearestDurak.getId(),hedefDurak.getId());
-                            double cost = sadeceotobus.calculateTotalCost(Path,userType);
-                            System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
-                            output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
-                        } else if (secilenIslem == 5) {
-                            output.append("5. Sadece tramvay ile gitmek için yol (TRANSFERSİZ)\n");
-                            List<String> Path = sadeceTramvay.getOnlyTramRoute(nearestDurak.getId(),hedefDurak.getId());
-                            double cost = yolBulucu.calculateTotalCost(Path,userType);
-                            System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
-                            output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
-                        }
-                        else if(secilenIslem == 6){
-                            System.out.println("6. Konumdan Durağa Taksi Ücreti.");
-                            double taxiCost = routeFinder.calculateTaxiCost(coordinates.getUserLatGuncel(),coordinates.getUserLonGuncel(),hedefDurak,taxiInfo);
-                            double distance = routeFinder.haversineTaxiDistance(coordinates.getUserLatGuncel(),coordinates.getUserLonGuncel(),hedefDurak.getLat(),hedefDurak.getLon());
-                            System.out.println(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,distance));
-                            output.append(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,distance));
-                        }
-                        output.append("\nİşlem tamamlandı.\n");
-                        JOptionPane.showMessageDialog(MainFrame.this,
-                                "İşlem tamamlandı.");
-                        break;
-                    default:
-                        output.append("Hatalı seçim\n");
-                        JOptionPane.showMessageDialog(MainFrame.this,
-                                "Hatalı seçim yaptınız.");
-                }
-                // outputArea'ya sonucu yaz
-                outputArea.setText(output.toString());
+                String hedefDurakIsmi = hedefDurakField.getText().trim();
+
+                // ✅ Tüm mantığı mainFrameLogic'e devrediyoruz
+                String result = mainFrameLogic.handleOperation(secilenIslem, hedefDurakIsmi, outputArea);
+                outputArea.setText(result);
             }
         });
+
 
         // -------------------------------------------------------------------
         // Panelleri ana pencereye ekleyelim (BorderLayout)

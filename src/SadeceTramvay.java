@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class SadeceTramvay {
+public class SadeceTramvay implements TransportStrategy  {
     private Map<String, Durak> durakMap;
 
     // Durakları haritaya ekliyoruz
@@ -140,4 +140,8 @@ public class SadeceTramvay {
         }
         return totalTime; // Toplam süreyi döndürüyoruz
     }
+    public List<String> findRoute(String start, String destination) {
+        return getOnlyTramRoute(start, destination);
+    }
+
 }
