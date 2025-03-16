@@ -54,7 +54,6 @@ public class RouteFinder implements PathFinder {
     @Override
     public double calculateTotalCost(List<String> path, String userType) {
         double totalCost = 0.0;
-
         for (String stopId : path) {
             Durak durak = durakMap.get(stopId);
             if (durak != null && durak.getNextStops() != null) {
@@ -63,7 +62,6 @@ public class RouteFinder implements PathFinder {
                 }
             }
         }
-
         // Kullanıcı tipine göre indirim uygula
         if (userType != null) {
             if (userType.equals("Ogrenci")) {
@@ -72,14 +70,12 @@ public class RouteFinder implements PathFinder {
                 totalCost *= 0.7; // %30 indirim
             }
         }
-
         return totalCost;
     }
 
     @Override
     public int calculateTotalTime(List<String> path) {
         int totalTime = 0;
-
         for (String stopId : path) {
             Durak durak = durakMap.get(stopId);
             if (durak != null && durak.getNextStops() != null) {
@@ -145,14 +141,7 @@ public class RouteFinder implements PathFinder {
         return sb.toString();
     }
 
-    public double haversineDistance(Durak d1, Durak d2) {
-        if (d1 == null || d2 == null) {
-            throw new IllegalArgumentException("D1 veya D2 null olamaz.");
-        }
-        return haversineTaxiDistance(d1.getLat(), d1.getLon(), d2.getLat(), d2.getLon());
-    }
-
-    public double haversineTaxiDistance(double lat1, double lon1, double lat2, double lon2) {
+    public double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
         final double R = 6371.0; // Dünya yarıçapı (km)
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
@@ -163,25 +152,4 @@ public class RouteFinder implements PathFinder {
         return R * c;
     }
 
-    public double calculateTaxiCost(double userLat, double userLon, Durak durak, Taxi taxi) {
-        double distanceKm = haversineTaxiDistance(userLat, userLon, durak.getLat(), durak.getLon());
-        return taxi.getOpeningFee() + (distanceKm * taxi.getCostPerKm());
-    }
-
-    public Durak findNearestDurak(double userLat, double userLon) {
-        Durak nearest = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for (Durak d : durakMap.values()) {
-            double distance = haversineTaxiDistance(userLat, userLon, d.getLat(), d.getLon());
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearest = d;
-            }
-        }
-        return nearest;
-    }
-    public List<Durak> getDuraklar() {
-        return new ArrayList<>(durakMap.values());
-    }
 }

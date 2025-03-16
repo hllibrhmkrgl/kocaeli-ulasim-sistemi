@@ -72,12 +72,12 @@ public class MainFrame extends JFrame {
         JPanel profilPanel = new JPanel();
         profilPanel.setLayout(new BoxLayout(profilPanel, BoxLayout.Y_AXIS));
         profilPanel.setBorder(BorderFactory.createTitledBorder("Profil Bilgisi"));
-
+        double DistanceToTaxiKm = routeFinder.haversineDistance(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(),nearestDurak.getLat(),nearestDurak.getLon());
         // Profil bilgileri
         JLabel lblDurakBilgisi = new JLabel("En Yakın Durak: " +
                 (nearestDurak != null ? nearestDurak.getId() : "Bilinmiyor"));
         JLabel BaslangicTaksiBilgisi = new JLabel("En yakın durağa Taksi ücreti : "+
-                routeFinder.calculateTaxiCost(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak, taxiInfo)
+                taxi.calculateTaxiCost(DistanceToTaxiKm,taxiInfo)
                       +" TL");
         JLabel lblKoordinat = new JLabel("Koordinatlar: " + coordinates.getUserLatGirilen() + " , " + coordinates.getUserLonGirilen());
 

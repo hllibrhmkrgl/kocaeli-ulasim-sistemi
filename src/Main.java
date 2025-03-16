@@ -14,6 +14,7 @@ public class Main {
             try {
                 String jsonPath = "veriseti.json";
                 Root root = JsonReader.readJson(jsonPath);
+                Taxi taxi = new Taxi();
                 Coordinates coordinates = new Coordinates();
                 coordinates.setUserLatGirilen(userLat);
                 coordinates.setUserLonGirilen(userLon);
@@ -33,9 +34,10 @@ public class Main {
                 if (enYakinDurakMesafe > 3) {
                     System.out.println("Mesafe > 3 km, taksi çağırılıyor...");
                 }
+                double mesafe = routeFinder.haversineDistance(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak.getLat(), nearestDurak.getLon());
                 System.out.println("En yakın durağa olan taksi ücreti: " +
                         String.format("%.2f TL",
-                                routeFinder.calculateTaxiCost(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak, taxiInfo)));
+                                taxi.calculateTaxiCost(mesafe, taxiInfo)));
                 MainFrame frame = new MainFrame(
                         nearestDurak,
                         root,

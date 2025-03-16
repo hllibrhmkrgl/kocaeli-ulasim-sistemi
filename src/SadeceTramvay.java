@@ -58,9 +58,7 @@ public class SadeceTramvay implements TransportStrategy  {
             System.out.println("❌ Rota boş, işlem yapılamaz!");
             return 0.0;
         }
-
         double totalCost = 0.0;
-
         // Path'teki her durak için geçişleri kontrol ediyoruz
         for (int i = 0; i < path.size() - 1; i++) {
             Durak currentDurak = durakMap.get(path.get(i));

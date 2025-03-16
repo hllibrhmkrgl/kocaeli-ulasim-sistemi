@@ -12,7 +12,7 @@ public class MainFrameLogic {
     private SadeceTramvay sadeceTramvay;
     private Durak nearestDurak;
     private Taxi taxiInfo;
-
+    private Taxi taxi;
     // "Kullanıcı tipi" de bu mantık sınıfında takip edilecek
     private String userType = "Normal";
 
@@ -109,19 +109,12 @@ public class MainFrameLogic {
                 }
                 else if (secilenIslem == 6) {
                     output.append("6. Konumdan Durağa Taksi Ücreti.\n");
-                    double taxiCost = routeFinder.calculateTaxiCost(
-                            coordinates.getUserLatGuncel(),
-                            coordinates.getUserLonGuncel(),
-                            hedefDurak,
+                    double mesafe = routeFinder.haversineDistance(coordinates.getUserLatGuncel(),coordinates.getUserLonGuncel(),hedefDurak.getLat(),hedefDurak.getLon());
+                    double taxiCost = taxi.calculateTaxiCost(
+                            mesafe,
                             taxiInfo
                     );
-                    double distance = routeFinder.haversineTaxiDistance(
-                            coordinates.getUserLatGuncel(),
-                            coordinates.getUserLonGuncel(),
-                            hedefDurak.getLat(),
-                            hedefDurak.getLon()
-                    );
-                    output.append(yazdirma.TaxiDetails(nearestDurak.getId(), hedefDurak.getId(), taxiCost, distance));
+                    output.append(yazdirma.TaxiDetails(nearestDurak.getId(), hedefDurak.getId(), taxiCost,mesafe));
                 }
 
                 output.append("\nİşlem tamamlandı.\n");
