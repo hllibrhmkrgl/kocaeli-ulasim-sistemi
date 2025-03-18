@@ -141,10 +141,13 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (rbOgrenci.isSelected()) {
                     userType = "Ogrenci";
+                    mainFrameLogic.setUserType(userType);
                 } else if (rbYasli.isSelected()) {
                     userType = "Yasli";
+                    mainFrameLogic.setUserType(userType);
                 } else {
                     userType = "Normal";
+                    mainFrameLogic.setUserType(userType);
                 }
                 System.out.println("Kullanıcı tipi seçildi: " + userType);
                 updateDiscountLabels(lblDiscountHeader, lblDiscountValue, userType);

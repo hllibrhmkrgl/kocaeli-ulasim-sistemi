@@ -58,6 +58,7 @@ public class MainFrameLogic {
                 output.append("2. Otobüs Duraklarının ismine bakma\n");
                 String busInfo = routeFinder.getAllBusInfo();
                 output.append(busInfo).append("\n");
+                System.out.println(busInfo);
                 JOptionPane.showMessageDialog(null, "İşlem Başarılı");
                 break;
 
@@ -65,6 +66,7 @@ public class MainFrameLogic {
                 output.append("3. Tramvay Duraklarının ismine bakma\n");
                 String tramInfo = routeFinder.getAllTramInfo();
                 output.append(tramInfo).append("\n");
+                System.out.println(tramInfo);
                 JOptionPane.showMessageDialog(null, "İşlem Başarılı");
                 break;
 
@@ -94,17 +96,20 @@ public class MainFrameLogic {
                     List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(), hedefDurak.getId());
                     double cost = yolBulucu.calculateTotalCost(Path, userType);
                     output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
+                    System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                 }
                 else if (secilenIslem == 4) {
                     output.append("4. Sadece Otobüs ile gitmek için yol (TRANSFERSİZ)\n");
                     List<String> Path = sadeceOtobus.getOnlyBusRoute(nearestDurak.getId(), hedefDurak.getId());
                     double cost = sadeceOtobus.calculateTotalCost(Path, userType);
+                    System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                     output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                 }
                 else if (secilenIslem == 5) {
                     output.append("5. Sadece tramvay ile gitmek için yol (TRANSFERSİZ)\n");
                     List<String> Path = sadeceTramvay.getOnlyTramRoute(nearestDurak.getId(), hedefDurak.getId());
                     double cost = yolBulucu.calculateTotalCost(Path, userType);
+                    System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                     output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
                 }
                 else if (secilenIslem == 6) {
@@ -114,6 +119,7 @@ public class MainFrameLogic {
                             mesafe,
                             taxiInfo
                     );
+                    System.out.println(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,mesafe));
                     output.append(yazdirma.TaxiDetails(nearestDurak.getId(), hedefDurak.getId(), taxiCost,mesafe));
                 }
 
