@@ -17,7 +17,6 @@ public class ApplicationContext {
         }
 
         this.locationHandler = (LocationHandler) new UserLocationHandler(root.getDuraklar(), root.getTaxi());
-        this.pathFinder = new RouteFinder(root.getDuraklar());
         this.coordinates = new Coordinates();
         this.taxiInfo = root.getTaxi();
         this.yazdirma = new Yazdırma(root.getDuraklar());

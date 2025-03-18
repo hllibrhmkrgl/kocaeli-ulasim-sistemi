@@ -59,7 +59,6 @@ public class MainFrame extends JFrame {
                 this.sadeceOtobus,
                 this.sadeceTramvay
         );
-        double enYakinDurakMesafe = locationHandler.getDistanceToDurak(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(), nearestDurak);
         // Temel pencere ayarları
         setTitle("Ulaşım Uygulaması");
         setSize(1280, 720);
@@ -72,20 +71,15 @@ public class MainFrame extends JFrame {
         JPanel profilPanel = new JPanel();
         profilPanel.setLayout(new BoxLayout(profilPanel, BoxLayout.Y_AXIS));
         profilPanel.setBorder(BorderFactory.createTitledBorder("Profil Bilgisi"));
-        double DistanceToTaxiKm = routeFinder.haversineDistance(coordinates.getUserLatGirilen(), coordinates.getUserLonGirilen(),nearestDurak.getLat(),nearestDurak.getLon());
         // Profil bilgileri
-        JLabel lblDurakBilgisi = new JLabel("En Yakın Durak: " +
+        JLabel lblDurakBilgisi = new JLabel("Bulunduğun Durak: " +
                 (nearestDurak != null ? nearestDurak.getId() : "Bilinmiyor"));
-        JLabel BaslangicTaksiBilgisi = new JLabel("En yakın durağa Taksi ücreti : "+
-                taxi.calculateTaxiCost(DistanceToTaxiKm,taxiInfo)
-                      +" TL");
-        JLabel lblKoordinat = new JLabel("Koordinatlar: " + coordinates.getUserLatGirilen() + " , " + coordinates.getUserLonGirilen());
+
+        JLabel lblKoordinat = new JLabel("Koordinatlar: " + coordinates.getUserLatGuncel() + " , " + coordinates.getUserLonGuncel());
 
         lblDurakBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblDurakBilgisi.getPreferredSize().height));
         lblKoordinat.setMaximumSize(new Dimension(Integer.MAX_VALUE, lblKoordinat.getPreferredSize().height));
-        BaslangicTaksiBilgisi.setMaximumSize(new Dimension(Integer.MAX_VALUE, BaslangicTaksiBilgisi.getPreferredSize().height));
         lblDurakBilgisi.setAlignmentX(Component.LEFT_ALIGNMENT);
-        BaslangicTaksiBilgisi.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblKoordinat.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 
@@ -169,7 +163,6 @@ public class MainFrame extends JFrame {
 
         // Profil paneline ekle
         profilPanel.add(lblDurakBilgisi);
-        profilPanel.add(BaslangicTaksiBilgisi);
         profilPanel.add(lblKoordinat);
         profilPanel.add(Box.createVerticalStrut(10)); // araya boşluk ekle
         profilPanel.add(userTypePanel);
