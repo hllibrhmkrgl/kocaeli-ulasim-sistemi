@@ -199,12 +199,13 @@ public class MainFrame extends JFrame {
 
         // b) İşlem seçenekleri ComboBox
         String[] islemler = {
-                "1. Gitmek İstediğim durağa en kısa yol",
+                "1. Gitmek İstediğim durağa en ucuz yol",
                 "2. Otobüs Duraklarının isimlerine bakma",
                 "3. Tramvay Duraklarının isimlerine bakma",
                 "4. Sadece Otobüs ile gitmek için yol(Transfersiz)",
                 "5. Sadece Tramvay ile gitmek için yol(Transfersiz)",
-                "6. Konumdan Durağa Taksi Ücreti."
+                "6. Konumdan Durağa Taksi Ücreti.",
+                "7. Gitmek istediğin durağa en hızlı yol."
         };
         islemCombo = new JComboBox<>(islemler);
         islemCombo.setMaximumSize(new Dimension(200, 30));

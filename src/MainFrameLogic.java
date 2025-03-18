@@ -12,7 +12,7 @@ public class MainFrameLogic {
     private SadeceTramvay sadeceTramvay;
     private Durak nearestDurak;
     private Taxi taxiInfo;
-    private Taxi taxi;
+    private Taxi taxi = new Taxi();
     // "Kullanıcı tipi" de bu mantık sınıfında takip edilecek
     private String userType = "Normal";
 
@@ -52,7 +52,6 @@ public class MainFrameLogic {
     // Switch-case içindeki tüm iş mantığını buraya taşıyoruz
     public String handleOperation(int secilenIslem, String hedefDurakIsmi, JTextArea outputArea) {
         StringBuilder output = new StringBuilder();
-
         switch (secilenIslem) {
             case 2:
                 output.append("2. Otobüs Duraklarının ismine bakma\n");
@@ -61,7 +60,6 @@ public class MainFrameLogic {
                 System.out.println(busInfo);
                 JOptionPane.showMessageDialog(null, "İşlem Başarılı");
                 break;
-
             case 3:
                 output.append("3. Tramvay Duraklarının ismine bakma\n");
                 String tramInfo = routeFinder.getAllTramInfo();
@@ -69,11 +67,11 @@ public class MainFrameLogic {
                 System.out.println(tramInfo);
                 JOptionPane.showMessageDialog(null, "İşlem Başarılı");
                 break;
-
             case 1:
             case 4:
             case 5:
             case 6:
+            case 7:
                 // Hedef durağı bulma
                 Durak hedefDurak = null;
                 boolean durakVarMi = false;
@@ -122,11 +120,16 @@ public class MainFrameLogic {
                     System.out.println(yazdirma.TaxiDetails(nearestDurak.getId(),hedefDurak.getId(),taxiCost,mesafe));
                     output.append(yazdirma.TaxiDetails(nearestDurak.getId(), hedefDurak.getId(), taxiCost,mesafe));
                 }
-
+                else if(secilenIslem == 7){
+                    output.append("7. En Hızlı süren yol \n");
+                    List<String> Path = yolBulucu.findFastestPath(nearestDurak.getId(), hedefDurak.getId());
+                    double cost = yolBulucu.calculateTotalCost(Path, userType);
+                    output.append(yazdirma.printRouteDetailsInfo(Path, userType, cost));
+                    System.out.println(yazdirma.printRouteDetailsInfo(Path, userType, cost));
+                }
                 output.append("\nİşlem tamamlandı.\n");
                 JOptionPane.showMessageDialog(null, "İşlem tamamlandı.");
                 break;
-
             default:
                 output.append("Hatalı seçim\n");
                 JOptionPane.showMessageDialog(null, "Hatalı seçim yaptınız.");

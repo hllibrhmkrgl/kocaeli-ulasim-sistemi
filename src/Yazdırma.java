@@ -13,9 +13,8 @@ public class Yazdırma {
     }
     public String printRouteDetailsInfo(List<String> path,String userType,Double Cost) {
         StringBuilder sb = new StringBuilder();
-
         // Eğer path boşsa, doğrudan hata mesajı döndür
-        if (path == null || path.isEmpty()) {
+        if (path == null || path.isEmpty() || path.size() < 2) {
             sb.append("❌ Rota bulunamadı!");
             return sb.toString();
         }

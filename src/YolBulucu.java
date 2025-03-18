@@ -70,6 +70,77 @@ public class YolBulucu {
         return path;
     }
 
+    public List<String> findFastestPath(String startId, String endId) {
+        // Her bir durak için en kısa süreyi tutacak map.
+        minTime = new HashMap<>();
+        // Bir önceki durağı tutarak, yol sonunda geriye dönük path oluşturacağız.
+        previousStop = new HashMap<>();
+
+        // Başlangıçta her durağın süresini “çok büyük” bir değere (∞) ayarlıyoruz
+        for (String stopId : durakHaritasi.keySet()) {
+            minTime.put(stopId, Integer.MAX_VALUE);
+        }
+        // Başlangıç noktasının süresi 0
+        minTime.put(startId, 0);
+
+        // PriorityQueue, en küçük "minTime" değeri olan durağı öncelikli alacak
+        PriorityQueue<String> queue =
+                new PriorityQueue<>(Comparator.comparingInt(minTime::get));
+        queue.add(startId);
+
+        while (!queue.isEmpty()) {
+            String currentStop = queue.poll();
+
+            // Hedef durağa ulaşmışsak döngüden çıkabiliriz
+            if (currentStop.equals(endId)) {
+                break;
+            }
+
+            // Mevcut durağa ait bilgileri alalım
+            Durak currentDurak = durakHaritasi.get(currentStop);
+            if (currentDurak == null) continue; // Güvenlik amacıyla null kontrolü
+
+            // 1) "nextStops" içindeki duraklara bakarak yeni süre hesaplama
+            for (NextStop next : currentDurak.getNextStops()) {
+                // Mevcut durağa kadar gelen süre + şu anki bağlantının süresi
+                int newTime = minTime.get(currentStop) + next.getSure();
+
+                // Eğer hesapladığımız yeni süre, kayıtlardaki süreden daha kısaysa güncelle
+                if (newTime < minTime.get(next.getStopId())) {
+                    minTime.put(next.getStopId(), newTime);
+                    previousStop.put(next.getStopId(), currentStop);
+                    // PriorityQueue'ya ekleyerek sonraki adımda değerlendirilecek
+                    queue.add(next.getStopId());
+                }
+            }
+
+            // 2) Transfer varsa onu da dahil et
+            Transfer transfer = currentDurak.getTransfer();
+            if (transfer != null) {
+                String transferStopId = transfer.getTransferStopId();
+                int newTime = minTime.get(currentStop) + transfer.getTransferSure();
+
+                if (newTime < minTime.get(transferStopId)) {
+                    minTime.put(transferStopId, newTime);
+                    previousStop.put(transferStopId, currentStop);
+                    queue.add(transferStopId);
+                }
+            }
+        }
+
+        // En hızlı yolu (en kısa süre) geriye dönük olarak path listesine ekle
+        List<String> path = new ArrayList<>();
+        String current = endId;
+        while (current != null) {
+            path.add(current);
+            current = previousStop.get(current);
+        }
+        // Tersten eklediğimiz için path'i düzeltelim
+        Collections.reverse(path);
+
+        return path;
+    }
+
     public double calculateTotalCost(List<String> path, String userType) {
         // Null veya boş rota kontrolü
         if (path == null || path.isEmpty()) {
@@ -132,7 +203,6 @@ public class YolBulucu {
         return totalCost;
     }
 
-
     // Toplam süreyi hesaplama (Transfer süreleri dahil)
     public int calculateTotalTime(List<String> path) {
         int totalTime = 0;
@@ -172,8 +242,5 @@ public class YolBulucu {
 
         return totalTime; // Toplam süreyi döndürüyoruz
     }
-
-
-
 
 }
