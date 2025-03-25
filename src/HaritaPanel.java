@@ -7,6 +7,9 @@ public class HaritaPanel extends JPanel {
 
     private List<Durak> durakList;
     private Durak currentDurak;  // Şu an bulunduğunuz durak
+    private Image busLogo;
+    private Image tramLogo;
+
 
     // Gerçek min-max değerler (durakların enlem, boylam aralığı)
     private double minLat, maxLat, minLon, maxLon;
@@ -33,37 +36,26 @@ public class HaritaPanel extends JPanel {
     }
 
     public HaritaPanel(List<Durak> durakList) {
+        busLogo = new ImageIcon("bus_logo.png").getImage();
+        tramLogo = new ImageIcon("tram_logo.png").getImage();
+
         this.durakList = durakList;
 
         // Harita resmi yükleme (örneğin "harita.png" dosyası)
         backgroundImage = new ImageIcon("izmit_map.jpg").getImage();
 
-        if (durakList != null && !durakList.isEmpty()) {
-            // İlk durak değerleriyle başla
-            minLat = durakList.get(0).getLat();
-            maxLat = durakList.get(0).getLat();
-            minLon = durakList.get(0).getLon();
-            maxLon = durakList.get(0).getLon();
+        // Bu sabit değerleri deneyerek ayarlayabilirsin
+        minLat = 40.758;
+        maxLat = 40.786;
+        minLon = 29.918;
+        maxLon = 29.973;
 
-            // Tüm durakların min-max lat-lon değerini bul
-            for (Durak d : durakList) {
-                double lat = d.getLat();
-                double lon = d.getLon();
+// Sabit değerlerden diğerlerini türet
+        latRange = maxLat - minLat;
+        lonRange = maxLon - minLon;
 
-                if (lat < minLat) minLat = lat;
-                if (lat > maxLat) maxLat = lat;
-                if (lon < minLon) minLon = lon;
-                if (lon > maxLon) maxLon = lon;
-            }
-
-            // Toplam aralık
-            latRange = maxLat - minLat;
-            lonRange = maxLon - minLon;
-
-            // Merkez (ortalama) konum
-            centerLat = (maxLat + minLat) / 2.0;
-            centerLon = (maxLon + minLon) / 2.0;
-        }
+        centerLat = (maxLat + minLat) / 2.0;
+        centerLon = (maxLon + minLon) / 2.0;
 
         // Zoom için mouse tekerleği dinleyicisi
         addMouseWheelListener(new MouseWheelListener() {
@@ -232,10 +224,23 @@ public class HaritaPanel extends JPanel {
             } else {
                 g2.setColor(Color.RED);  // Diğer duraklar için kırmızı renk
             }
-            g2.fillOval(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize);
+
+            Image logoImage = null;
+
+            if (d.getId().startsWith("bus_")) {
+                logoImage = busLogo;
+            } else if (d.getId().startsWith("tram_")) {
+                logoImage = tramLogo;
+            }
+
+            int iconSize = 20;
+            if (logoImage != null) {
+                g.drawImage(logoImage, x - iconSize / 2, y - iconSize / 2, iconSize, iconSize, this);
+            }
+
 
             g2.setColor(Color.BLACK);
-            g2.drawString(d.getId(), x + 6, y);
+            g2.drawString(d.getId(), x + 12, y - 5);
         }
     }
 }

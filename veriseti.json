@@ -9,8 +9,8 @@
         "id": "bus_otogar",
         "name": "Otogar (Bus)",
         "type": "bus",
-        "lat": 40.78259,
-        "lon": 29.94628,
+        "lat": 40.77600,
+        "lon": 29.95800,
         "sonDurak": false,
         "nextStops": [
           {
@@ -30,8 +30,8 @@
         "id": "bus_sekapark",
         "name": "Sekapark (Bus)",
         "type": "bus",
-        "lat": 40.76520,
-        "lon": 29.96190,
+        "lat": 40.77950,
+        "lon": 29.93500,
         "sonDurak": false,
         "nextStops": [
           {
@@ -63,7 +63,7 @@
         "id": "bus_yahyakaptan",
         "name": "Yahya Kaptan (Bus)",
         "type": "bus",
-        "lat": 40.770965,
+        "lat": 40.77700,
         "lon": 29.959499,
         "sonDurak": false,
         "nextStops": [
@@ -84,7 +84,7 @@
         "id": "bus_umuttepe",
         "name": "Umuttepe (Bus)",
         "type": "bus",
-        "lat": 40.76400,
+        "lat": 40.76000,
         "lon": 29.94350,
         "sonDurak": true,
         "nextStops": [],
@@ -95,8 +95,8 @@
         "id": "bus_symbolavm",
         "name": "Symbol AVM (Bus)",
         "type": "bus",
-        "lat": 40.77788,
-        "lon": 29.94991,
+        "lat": 40.78100,
+        "lon": 29.95700,
         "sonDurak": true,
         "nextStops": [],
         "transfer": null
@@ -105,8 +105,8 @@
         "id": "bus_41burda",
         "name": "41 Burda AVM (Bus)",
         "type": "bus",
-        "lat": 40.78,
-        "lon": 29.92512,
+        "lat": 40.78150,
+        "lon": 29.94950,
         "sonDurak": true,
         "nextStops": [],
         "transfer": null
@@ -116,8 +116,8 @@
         "id": "tram_otogar",
         "name": "Otogar (Tram)",
         "type": "tram",
-        "lat": 40.78245,
-        "lon": 29.94610,
+        "lat": 40.77550,
+        "lon": 29.96,
         "sonDurak": false,
         "nextStops": [
           {
@@ -137,8 +137,8 @@
         "id": "tram_yahyakaptan",
         "name": "Yahya Kaptan (Tram)",
         "type": "tram",
-        "lat": 40.77160,
-        "lon": 29.96010,
+        "lat": 40.77800,
+        "lon": 29.95900,
         "sonDurak": false,
         "nextStops": [
           {
@@ -158,8 +158,8 @@
         "id": "tram_sekapark",
         "name": "Sekapark (Tram)",
         "type": "tram",
-        "lat": 40.76200,
-        "lon": 29.96550,
+        "lat": 40.78050,
+        "lon": 29.93100,
         "sonDurak": false,
         "nextStops": [
           {
@@ -179,7 +179,7 @@
         "id": "tram_halkevi",
         "name": "Halkevi (Tram)",
         "type": "tram",
-        "lat": 40.77800,
+        "lat": 40.78,
         "lon": 29.93870,
         "sonDurak": true,
         "nextStops": [],
