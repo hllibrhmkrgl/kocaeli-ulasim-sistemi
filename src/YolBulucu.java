@@ -4,7 +4,7 @@ public class YolBulucu {
     private Map<String, Durak> durakHaritasi;
     private Map<String, Double> minCost;
     private Map<String, String> previousStop;
-    private Map<String, Integer> minTime; // En kısa süreyi tutmak için ekliyoruz
+    private Map<String, Integer> minTime;
 
     public YolBulucu(List<Durak> durakList) {
         durakHaritasi = new HashMap<>();
@@ -13,9 +13,7 @@ public class YolBulucu {
         }
     }
 
-    // En ucuz yolu bulma (Dijkstra algoritması)
     public List<String> findCheapestPath(String startId, String endId) {
-        // Başlangıç duraklarını başlatıyoruz
         minCost = new HashMap<>();
         previousStop = new HashMap<>();
         minTime = new HashMap<>(); // Toplam süreyi tutmak için
@@ -31,11 +29,9 @@ public class YolBulucu {
             String currentStop = queue.poll();
             if (currentStop.equals(endId)) break;
             Durak currentDurak = durakHaritasi.get(currentStop);
-            // Duraklar arasındaki geçişleri kontrol ediyoruz
             for (NextStop next : currentDurak.getNextStops()) {
                 double newCost = minCost.get(currentStop) + next.getUcret();
                 int newTime = minTime.get(currentStop) + next.getSure();
-                // Daha ucuz bir yol bulduysak, minCost ve minTime güncelleniyor
                 if (newCost < minCost.get(next.getStopId()) || newTime < minTime.get(next.getStopId())) {
                     minCost.put(next.getStopId(), newCost);
                     minTime.put(next.getStopId(), newTime);
@@ -43,7 +39,6 @@ public class YolBulucu {
                     queue.add(next.getStopId());
                 }
             }
-            // Transferler varsa, onları da hesaplıyoruz
             Transfer transfer = currentDurak.getTransfer();
             if (transfer != null) {
                 String transferStopId = transfer.getTransferStopId();
@@ -71,50 +66,31 @@ public class YolBulucu {
     }
 
     public List<String> findFastestPath(String startId, String endId) {
-        // Her bir durak için en kısa süreyi tutacak map.
         minTime = new HashMap<>();
-        // Bir önceki durağı tutarak, yol sonunda geriye dönük path oluşturacağız.
         previousStop = new HashMap<>();
-
-        // Başlangıçta her durağın süresini “çok büyük” bir değere (∞) ayarlıyoruz
         for (String stopId : durakHaritasi.keySet()) {
             minTime.put(stopId, Integer.MAX_VALUE);
         }
-        // Başlangıç noktasının süresi 0
         minTime.put(startId, 0);
-
-        // PriorityQueue, en küçük "minTime" değeri olan durağı öncelikli alacak
         PriorityQueue<String> queue =
                 new PriorityQueue<>(Comparator.comparingInt(minTime::get));
         queue.add(startId);
-
         while (!queue.isEmpty()) {
             String currentStop = queue.poll();
-
-            // Hedef durağa ulaşmışsak döngüden çıkabiliriz
             if (currentStop.equals(endId)) {
                 break;
             }
-
-            // Mevcut durağa ait bilgileri alalım
             Durak currentDurak = durakHaritasi.get(currentStop);
-            if (currentDurak == null) continue; // Güvenlik amacıyla null kontrolü
-
-            // 1) "nextStops" içindeki duraklara bakarak yeni süre hesaplama
+            if (currentDurak == null) continue;
             for (NextStop next : currentDurak.getNextStops()) {
-                // Mevcut durağa kadar gelen süre + şu anki bağlantının süresi
                 int newTime = minTime.get(currentStop) + next.getSure();
 
-                // Eğer hesapladığımız yeni süre, kayıtlardaki süreden daha kısaysa güncelle
                 if (newTime < minTime.get(next.getStopId())) {
                     minTime.put(next.getStopId(), newTime);
                     previousStop.put(next.getStopId(), currentStop);
-                    // PriorityQueue'ya ekleyerek sonraki adımda değerlendirilecek
                     queue.add(next.getStopId());
                 }
             }
-
-            // 2) Transfer varsa onu da dahil et
             Transfer transfer = currentDurak.getTransfer();
             if (transfer != null) {
                 String transferStopId = transfer.getTransferStopId();
@@ -128,21 +104,18 @@ public class YolBulucu {
             }
         }
 
-        // En hızlı yolu (en kısa süre) geriye dönük olarak path listesine ekle
         List<String> path = new ArrayList<>();
         String current = endId;
         while (current != null) {
             path.add(current);
             current = previousStop.get(current);
         }
-        // Tersten eklediğimiz için path'i düzeltelim
         Collections.reverse(path);
 
         return path;
     }
 
     public double calculateTotalCost(List<String> path, String userType) {
-        // Null veya boş rota kontrolü
         if (path == null || path.isEmpty()) {
             System.out.println("❌ Rota boş, işlem yapılamaz!");
             return 0.0;
@@ -150,24 +123,20 @@ public class YolBulucu {
 
         double totalCost = 0.0;
 
-        // Path'teki her durak için geçiş ücretlerini kontrol ediyoruz
         for (int i = 0; i < path.size() - 1; i++) {
             Durak currentDurak = durakHaritasi.get(path.get(i));
 
-            // Null kontrolü yapıyoruz
             if (currentDurak == null || currentDurak.getNextStops() == null) {
                 System.out.println("❌ Geçerli durak bulunamadı veya sonraki duraklar mevcut değil: " + path.get(i));
-                continue; // Eğer geçerli durak yoksa veya sonraki duraklar yoksa bir sonraki durak için devam et
+                continue;
             }
 
-            // Geçişi kontrol ediyoruz
             boolean foundNextStop = false;
             for (NextStop nextStop : currentDurak.getNextStops()) {
                 if (nextStop.getStopId().equals(path.get(i + 1))) {
-                    // Toplam ücreti ekliyoruz
                     totalCost += nextStop.getUcret();
                     foundNextStop = true;
-                    break; // İlgili geçişi bulduktan sonra döngüden çıkıyoruz
+                    break;
                 }
             }
 
@@ -176,38 +145,32 @@ public class YolBulucu {
             }
         }
 
-        // Son durakta transfer var mı? Transfer ücreti eklenmeli.
-        String currentStop = path.get(path.size() - 1); // Son durak
+        String currentStop = path.get(path.size() - 1);
         Durak currentDurak = durakHaritasi.get(currentStop);
 
         if (currentDurak != null && currentDurak.getTransfer() != null) {
             Transfer transfer = currentDurak.getTransfer();
             String transferStopId = transfer.getTransferStopId();
 
-            // Eğer transfer durak, rotadaki bir durakla eşleşiyorsa, transfer ücreti ekle
             if (path.contains(transferStopId)) {
                 totalCost += transfer.getTransferUcret();
             }
         }
 
-        // Kullanıcı tipine göre indirimleri uyguluyoruz
         if (userType != null) {
             if (userType.equals("Ogrenci")) {
-                totalCost *= 0.8; // Öğrencilere %20 indirim
+                totalCost *= 0.8;
             } else if (userType.equals("Yasli")) {
-                totalCost *= 0.7; // Yaşlılara %30 indirim
+                totalCost *= 0.7;
             }
         }
 
-        // Toplam ücreti döndürüyoruz
         return totalCost;
     }
 
-    // Toplam süreyi hesaplama (Transfer süreleri dahil)
     public int calculateTotalTime(List<String> path) {
         int totalTime = 0;
 
-        // Path'teki her durak için geçişleri kontrol ediyoruz
         for (int i = 0; i < path.size() - 1; i++) {
             String currentStopId = path.get(i);
             String nextStopId = path.get(i + 1);
@@ -217,7 +180,6 @@ public class YolBulucu {
             if (currentDurak == null || nextDurak == null) continue;
 
             NextStop selectedNextStop = null;
-            // Geçişleri kontrol ediyoruz
             if (currentDurak.getNextStops() != null) {
                 for (NextStop ns : currentDurak.getNextStops()) {
                     if (ns.getStopId().equals(nextStopId)) {
@@ -230,17 +192,15 @@ public class YolBulucu {
             Transfer transfer = currentDurak.getTransfer();
             boolean isTransfer = (transfer != null && transfer.getTransferStopId().equals(nextStopId));
 
-            // Normal geçişin süresi
             if (selectedNextStop != null) {
                 totalTime += selectedNextStop.getSure();
             }
-            // Transfer geçişinin süresi
             else if (isTransfer) {
                 totalTime += transfer.getTransferSure();
             }
         }
 
-        return totalTime; // Toplam süreyi döndürüyoruz
+        return totalTime;
     }
 
 }

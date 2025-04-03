@@ -5,7 +5,6 @@ public class Root {
     private Taxi taxi;
     private ArrayList<Durak> duraklar = new ArrayList<>();
 
-    // Getter & Setter
     public String getCity() {
         return city;
     }

@@ -3,7 +3,6 @@ public class Transfer {
     private int transferSure;
     private double transferUcret;
 
-    // Getter & Setter
     public String getTransferStopId() {
         return transferStopId;
     }

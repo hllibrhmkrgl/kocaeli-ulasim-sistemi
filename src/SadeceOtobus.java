@@ -2,39 +2,28 @@ import java.util.*;
 
 public class SadeceOtobus implements TransportStrategy{
     private Map<String, Durak> durakMap;
-
-    // Durakları haritaya ekliyoruz
     public SadeceOtobus(List<Durak> durakList) {
         durakMap = new HashMap<>();
         for (Durak d : durakList) {
             durakMap.put(d.getId(), d);
         }
     }
-
-    // Sadece otobüs rotasını bulma
     public List<String> getOnlyBusRoute(String from, String to) {
         List<String> busRoute = new ArrayList<>();
-
-        // Başlangıç ve varış duraklarının geçerli olup olmadığını kontrol et
         if (!durakMap.containsKey(from) || !durakMap.containsKey(to)) {
             System.out.println("❌ Hatalı durak ID'si!");
             return busRoute;
         }
-
         Queue<List<String>> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
         queue.add(Collections.singletonList(from));
         visited.add(from);
-
         while (!queue.isEmpty()) {
             List<String> path = queue.poll();
             String lastStop = path.get(path.size() - 1);
-
-            // Varış durağı bulunduğunda rotayı döndür
             if (lastStop.equals(to)) {
                 return new ArrayList<>(path);
             }
-
             Durak currentDurak = durakMap.get(lastStop);
             if (currentDurak.getNextStops() != null) {
                 for (NextStop ns : currentDurak.getNextStops()) {
@@ -49,7 +38,6 @@ public class SadeceOtobus implements TransportStrategy{
                 }
             }
         }
-
         System.out.println("❌ Belirtilen otobüs rotası bulunamadı.");
         return busRoute;
     }
@@ -61,15 +49,12 @@ public class SadeceOtobus implements TransportStrategy{
             return 0.0;
         }
         double totalCost = 0.0;
-
         for (int i = 0; i < path.size() - 1; i++) {
             Durak currentDurak = durakMap.get(path.get(i));
-
             if (currentDurak == null || currentDurak.getNextStops() == null) {
                 System.out.println("❌ Geçerli durak bulunamadı veya sonraki duraklar mevcut değil: " + path.get(i));
                 continue;
             }
-
             boolean foundNextStop = false;
             for (NextStop nextStop : currentDurak.getNextStops()) {
                 if (nextStop.getStopId().equals(path.get(i + 1))) {
@@ -82,8 +67,6 @@ public class SadeceOtobus implements TransportStrategy{
                 System.out.println("❌ İlgili geçiş bulunamadı: " + currentDurak.getId() + " -> " + path.get(i + 1));
             }
         }
-
-        // Son durakta transfer var mı? Transfer ücreti eklenmeli.
         String lastStop = path.get(path.size() - 1);
         Durak currentDurak = durakMap.get(lastStop);
         if (currentDurak != null && currentDurak.getTransfer() != null) {
@@ -93,7 +76,6 @@ public class SadeceOtobus implements TransportStrategy{
                 totalCost += transfer.getTransferUcret();
             }
         }
-
         for (int i = 0; i < path.size() - 1; i++) {
             currentDurak = durakMap.get(path.get(i));
             if (currentDurak == null || currentDurak.getNextStops() == null) {
@@ -107,8 +89,6 @@ public class SadeceOtobus implements TransportStrategy{
                 }
             }
         }
-
-        // Kullanıcı tipine göre indirim uygula
         if (userType != null) {
             if (userType.equals("Ogrenci")) {
                 totalCost *= 0.8; // %20 indirim
@@ -119,20 +99,15 @@ public class SadeceOtobus implements TransportStrategy{
 
         return totalCost;
     }
-
-    // Toplam süreyi hesaplama (Transfer süreleri dahil)
     @Override
     public int calculateTotalTime(List<String> path) {
         int totalTime = 0;
-
         for (int i = 0; i < path.size() - 1; i++) {
             String currentStopId = path.get(i);
             String nextStopId = path.get(i + 1);
             Durak currentDurak = durakMap.get(currentStopId);
             Durak nextDurak = durakMap.get(nextStopId);
-
             if (currentDurak == null || nextDurak == null) continue;
-
             NextStop selectedNextStop = null;
             if (currentDurak.getNextStops() != null) {
                 for (NextStop ns : currentDurak.getNextStops()) {
@@ -142,17 +117,14 @@ public class SadeceOtobus implements TransportStrategy{
                     }
                 }
             }
-
             Transfer transfer = currentDurak.getTransfer();
             boolean isTransfer = (transfer != null && transfer.getTransferStopId().equals(nextStopId));
-
             if (selectedNextStop != null) {
                 totalTime += selectedNextStop.getSure();
             } else if (isTransfer) {
                 totalTime += transfer.getTransferSure();
             }
         }
-
         return totalTime;
     }
     @Override

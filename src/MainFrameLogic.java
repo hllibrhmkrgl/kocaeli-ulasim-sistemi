@@ -13,7 +13,6 @@ public class MainFrameLogic {
     private Durak nearestDurak;
     private Taxi taxiInfo;
     private Taxi taxi = new Taxi();
-    // "Kullanıcı tipi" de bu mantık sınıfında takip edilecek
     private String userType = "Normal";
 
     public MainFrameLogic(Root root,
@@ -39,17 +38,14 @@ public class MainFrameLogic {
         this.sadeceTramvay = sadeceTramvay;
     }
 
-    // Kullanıcı tipini güncelleyen metot
     public void setUserType(String userType) {
         this.userType = userType;
     }
 
-    // Kullanıcı tipini döndüren metot
     public String getUserType() {
         return this.userType;
     }
 
-    // Switch-case içindeki tüm iş mantığını buraya taşıyoruz
     public String handleOperation(int secilenIslem, String hedefDurakIsmi, JTextArea outputArea) {
         StringBuilder output = new StringBuilder();
         switch (secilenIslem) {
@@ -72,7 +68,6 @@ public class MainFrameLogic {
             case 5:
             case 6:
             case 7:
-                // Hedef durağı bulma
                 Durak hedefDurak = null;
                 boolean durakVarMi = false;
                 for (Durak d : root.getDuraklar()) {
@@ -88,7 +83,6 @@ public class MainFrameLogic {
                     output.append("Hata! Girdiğiniz durak listede bulunmuyor.\n");
                     return output.toString();
                 }
-
                 if (secilenIslem == 1) {
                     output.append("1. Gitmek İstediğim durağa olan en kısa yol\n");
                     List<String> Path = yolBulucu.findCheapestPath(nearestDurak.getId(), hedefDurak.getId());

@@ -13,7 +13,6 @@ public class Yazdırma {
     }
     public String printRouteDetailsInfo(List<String> path,String userType,Double Cost) {
         StringBuilder sb = new StringBuilder();
-        // Eğer path boşsa, doğrudan hata mesajı döndür
         if (path == null || path.isEmpty() || path.size() < 2) {
             sb.append("❌ Rota bulunamadı!");
             return sb.toString();
@@ -22,13 +21,11 @@ public class Yazdırma {
         double totalCost = 0;
         double totalTime = 0;
         int step = 1;
-        // Her bir durak için işlemi gerçekleştirelim
         for (int i = 0; i < path.size() - 1; i++) {
             String currentStopId = path.get(i);
             String nextStopId = path.get(i + 1);
             Durak currentDurak = durakMap.get(currentStopId);
             Durak nextDurak = durakMap.get(nextStopId);
-            // Duraklar varsa işlemi yap
             if (currentDurak == null || nextDurak == null) continue;
             NextStop selectedNextStop = null;
             if (currentDurak.getNextStops() != null) {
@@ -41,7 +38,6 @@ public class Yazdırma {
             }
             Transfer transfer = currentDurak.getTransfer();
             boolean isTransfer = (transfer != null && transfer.getTransferStopId().equals(nextStopId));
-            // Normal geçiş
             if (selectedNextStop != null) {
                 totalCost += selectedNextStop.getUcret();
                 totalTime += selectedNextStop.getSure();
@@ -54,7 +50,6 @@ public class Yazdırma {
                 sb.append("💰 Ücret: ")
                         .append(String.format("%.2f TL", selectedNextStop.getUcret())).append("\n");
             }
-            // Transfer geçişi
             else if (isTransfer) {
                 totalCost += transfer.getTransferUcret();
                 totalTime += transfer.getTransferSure();
@@ -75,16 +70,11 @@ public class Yazdırma {
         String durakAdi = durak.getId().toLowerCase();
         if (durakAdi.contains("bus")) return "🚌 Otobüs";
         if (durakAdi.contains("tram")) return "🚋 Tramvay";
-        if (durakAdi.contains("metro")) return "🚇 Metro";
-        if (durakAdi.contains("ferry")) return "⛴️ Feribot";
         return "🚖 Taksi";
     }
     public String TaxiDetails(String startId, String endId, double cost, Double distance) {
-        // Ücret ve mesafeyi iki basamağa yuvarlıyoruz
-        String formattedCost = String.format("%.2f", cost); // Ücret
-        String formattedDistance = String.format("%.2f", distance); // Mesafe
-
-        // Detaylı açıklamayı oluşturuyoruz
+        String formattedCost = String.format("%.2f", cost);
+        String formattedDistance = String.format("%.2f", distance);
         String details = String.format("Başlangıç: %s\nBitiş: %s\nÜcret: %s TL\nMesafe: %s km",
                 startId, endId, formattedCost, formattedDistance);
         return details;

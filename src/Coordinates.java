@@ -1,12 +1,8 @@
 public class Coordinates {
-    // Kullanıcıdan girilen enlem ve boylam değerleri
     private double userLatGirilen;
     private double userLonGirilen;
-
-    // Kullanıcının güncel enlem ve boylam değerleri
     private double userLatGuncel;
     private double userLonGuncel;
-
     public Coordinates() {
     }
 

@@ -3,14 +3,13 @@ import java.util.ArrayList;
 public class Durak {
     private String id;
     private String name;
-    private String type;   // "bus" veya "tram"
+    private String type;
     private double lat;
     private double lon;
     private boolean sonDurak;
     private ArrayList<NextStop> nextStops = new ArrayList<>();
     private Transfer transfer;
 
-    // Getter & Setter
     public String getId() {
         return id;
     }

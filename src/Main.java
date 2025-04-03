@@ -1,14 +1,11 @@
 import javax.swing.*;
 
 public class Main {
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new CoordinateInputFrame();  // İlk önce koordinat alma ekranını açar
+            new CoordinateInputFrame();
         });
     }
-
-    // Kullanıcı koordinatları girdikten sonra çağrılacak metod:
     public static void startMainApplication(double userLat, double userLon) {
         SwingUtilities.invokeLater(() -> {
             try {
@@ -41,24 +38,23 @@ public class Main {
                 double taksiUcreti = taxi.calculateTaxiCost(mesafe,taxiInfo);
                 System.out.println("En yakın durağa olan taksi ücreti: " +
                         String.format("%.2f TL", taxi.calculateTaxiCost(mesafe, taxiInfo)));
-                // 3) TravelChoiceFrame (Taksi mi, Yürüyerek mi?) aç
                 TravelChoiceFrame choiceFrame = new TravelChoiceFrame(
                         nearestDurak,
                         enYakinDurakMesafe,
                         taksiUcreti,
                         (String secim) -> {
                             MainFrame frame = new MainFrame(
-                                    nearestDurak,       // 1
-                                    root,               // 2
-                                    locationHandler,    // 3
-                                    routeFinder,        // 4
-                                    nearestDurak,       // 5 (tekrar nearestDurak gönderiyorsunuz)
-                                    coordinates,        // 6
-                                    taxiInfo,           // 7
-                                    yolBulucu,          // 8
-                                    yazdirma,           // 9
-                                    sadeceOtobus,       // 10
-                                    sadeceTramvay       // 11
+                                    nearestDurak,
+                                    root,
+                                    locationHandler,
+                                    routeFinder,
+                                    nearestDurak,
+                                    coordinates,
+                                    taxiInfo,
+                                    yolBulucu,
+                                    yazdirma,
+                                    sadeceOtobus,
+                                    sadeceTramvay
                             );
                             frame.setVisible(true);
                         }

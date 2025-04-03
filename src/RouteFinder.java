@@ -9,7 +9,6 @@ public class RouteFinder {
             durakMap.put(d.getId(), d);
         }
     }
-
     public String getAllBusInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("🚌 Otobüs Durakları ve Bağlantıları:\n");
@@ -36,7 +35,6 @@ public class RouteFinder {
         }
         return sb.toString();
     }
-
     public String getAllTramInfo() {
         StringBuilder sb = new StringBuilder();
         sb.append("🚊 Tramvay Durakları ve Bağlantıları:\n");
